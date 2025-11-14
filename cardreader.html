@@ -759,48 +759,62 @@
             border-color: #d4af37;
         }
 
-        /* Screenshot Mode Styles */
-        body.screenshot-mode {
+        /* Fullscreen Spread Mode Styles */
+        body.fullscreen-spread {
             background: #1a0f2e;
             padding: 0;
         }
 
-        body.screenshot-mode .container {
+        body.fullscreen-spread .container {
             border: none;
-            background: #2a1f3d;
+            background: #1a0f2e;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        body.screenshot-mode header,
-        body.screenshot-mode .sidebar,
-        body.screenshot-mode .notes-panel {
+        body.fullscreen-spread header,
+        body.fullscreen-spread .sidebar,
+        body.fullscreen-spread .notes-panel {
             display: none;
         }
 
-        body.screenshot-mode .screenshot-toggle {
-            bottom: 10px;
-            right: 10px;
+        body.fullscreen-spread .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        body.screenshot-mode .center-panel {
-            padding: 5px;
-            background: #2a1f3d;
+        body.fullscreen-spread .center-panel {
+            flex: 1;
+            padding: 10px;
+            background: #1a0f2e;
         }
 
-        body.screenshot-mode .spread-container {
+        body.fullscreen-spread .spread-container {
+            width: 100%;
+            height: 100%;
             min-height: auto;
             background: #1a0f2e;
-            border: 1px solid #4a3b5c;
+            border: none;
             gap: 4px;
-            padding: 5px;
+            padding: 10px;
         }
 
-        body.screenshot-mode .card-controls {
+        body.fullscreen-spread .card-controls {
             display: none;
         }
 
-        body.screenshot-mode .position-label {
-            font-size: 0.65em;
-            padding: 2px 6px;
+        body.fullscreen-spread .position-label {
+            font-size: 0.7em;
+            padding: 3px 8px;
+        }
+
+        body.fullscreen-spread .view-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
         }
 
         /* Mobile optimization */
@@ -868,9 +882,9 @@
                 font-size: 0.7em;
             }
 
-            body.screenshot-mode .spread-container {
+            body.fullscreen-spread .spread-container {
                 gap: 3px;
-                padding: 3px;
+                padding: 8px;
             }
         }
     </style>
@@ -984,9 +998,9 @@
         </div>
     </div>
 
-    <!-- Screenshot Mode Toggle -->
-    <div class="screenshot-toggle">
-        <button id="screenshotBtn" onclick="toggleScreenshotMode()">Screenshot Mode</button>
+    <!-- View Toggle -->
+    <div class="view-toggle">
+        <button id="viewToggleBtn" onclick="toggleFullscreenSpread()">Fullscreen Spread</button>
     </div>
 
     <!-- Deck Management Modal -->
@@ -1073,7 +1087,7 @@
 
         let pendingDeckImages = [];
         let pendingSpreadPositions = [];
-        let screenshotMode = false;
+        let fullscreenSpread = false;
         let db = null;
         let positioningMode = 'grid'; // 'grid' or 'free'
         let nextRotation = 0; // For free mode: 0 = vertical, 90 = horizontal
@@ -1123,7 +1137,7 @@
         // Calculate card size for grid-based spreads
         function calculateGridCardSize(spread, containerWidth, containerHeight) {
             // Get the actual gap value from the container
-            const gap = screenshotMode ? 4 : 8;
+            const gap = fullscreenSpread ? 4 : 8;
 
             // Use the actual card aspect ratio from state
             const cardAspectRatio = state.cardAspectRatio || (2 / 3);
@@ -1451,29 +1465,29 @@
             alert(`Deck shuffled ${times} time${times > 1 ? 's' : ''}!`);
         }
 
-        // Screenshot mode toggle
-        function toggleScreenshotMode() {
-            screenshotMode = !screenshotMode;
-            const btn = document.getElementById('screenshotBtn');
-            if (screenshotMode) {
-                document.body.classList.add('screenshot-mode');
-                btn.textContent = 'Exit Screenshot';
+        // Fullscreen spread toggle
+        function toggleFullscreenSpread() {
+            fullscreenSpread = !fullscreenSpread;
+            const btn = document.getElementById('viewToggleBtn');
+            if (fullscreenSpread) {
+                document.body.classList.add('fullscreen-spread');
+                btn.textContent = 'Back to Setup';
             } else {
-                document.body.classList.remove('screenshot-mode');
-                btn.textContent = 'Screenshot Mode';
+                document.body.classList.remove('fullscreen-spread');
+                btn.textContent = 'Fullscreen Spread';
             }
 
-            // Re-render spread to adjust card sizes for screenshot mode
+            // Re-render spread to adjust card sizes for fullscreen mode
             if (state.currentSpread !== null && state.drawnCards.length > 0) {
                 // Small delay to allow CSS changes to take effect
                 setTimeout(() => renderSpread(), 50);
             }
         }
 
-        // Listen for Escape key to exit screenshot mode
+        // Listen for Escape key to exit fullscreen spread
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && screenshotMode) {
-                toggleScreenshotMode();
+            if (e.key === 'Escape' && fullscreenSpread) {
+                toggleFullscreenSpread();
             }
         });
 
