@@ -2,6 +2,12 @@
 
 A lightweight, single-file card reading application that works entirely in your browser. Import your own deck images, create custom spreads, and perform readings with full control over card orientation and positioning.
 
+## 🌐 Live Demo
+
+**[Launch Card Reader](https://mbbrinkman.github.io/SimpleCardReader/cardreader.html)**
+
+No installation required - just open in your browser and start reading!
+
 ## Features
 
 ### 🎴 Bring Your Own Deck
@@ -78,11 +84,32 @@ Each drawn card has three control buttons:
 ### Detailed Workflow
 
 #### 1. Import Your Deck
+
+**Preparing Your Card Images:**
+- **Source your images**: Use your own scanned cards, digital deck purchases, or create custom cards
+- **File formats**: JPG, PNG, GIF, or WebP
+- **Recommended size**: 400-600px height works well
+- **File naming**: Name files clearly (e.g., "00-fool.jpg", "01-magician.jpg") for easy organization
+- **Compression**: Use image compression to keep files under 200KB each for better performance
+
+**Import Process:**
 1. Click **"Import Deck Images"**
-2. Enter a name for your deck (optional)
-3. Click **"Select Card Images"** and choose all your card image files
-4. Review the preview (remove any unwanted images with the × button)
-5. Click **"Save Deck"** - your deck will be automatically shuffled
+2. Enter a name for your deck (e.g., "Rider-Waite Smith", "Thoth Tarot")
+3. Click **"Select Card Images"** and choose all your card image files at once
+   - Use Ctrl+A (Windows/Linux) or Cmd+A (Mac) to select all files in a folder
+   - You can select 78 cards, 22 cards, or any custom number
+4. Review the preview grid:
+   - Hover over any card to see the remove (×) button
+   - Remove any unwanted or duplicate images
+   - Cards appear in the order you'll use them
+5. Click **"Save Deck"** - your deck will be automatically shuffled 3 times
+
+**Tips for Best Results:**
+- Keep all card images in a dedicated folder on your computer
+- Use consistent image dimensions for all cards in your deck
+- Ensure card images are oriented upright before importing
+- For tarot: Standard is 78 cards (22 Major + 56 Minor Arcana)
+- For oracle decks: Any number works - import all your cards at once
 
 #### 2. Configure Shuffle Settings
 1. Set the number of shuffles (1-10) in the **"Shuffles"** field
