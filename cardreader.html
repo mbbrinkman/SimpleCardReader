@@ -12,30 +12,32 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f5f5f5;
+            font-family: Georgia, 'Times New Roman', serif;
+            background: #1a0f2e;
             min-height: 100vh;
             padding: 10px;
-            color: #333;
+            color: #e8dcc8;
         }
 
         .container {
             max-width: 100%;
             margin: 0 auto;
-            background: white;
-            border: 1px solid #ddd;
+            background: #2a1f3d;
+            border: 1px solid #4a3b5c;
         }
 
         header {
-            background: white;
-            color: #333;
+            background: #1a0f2e;
+            color: #d4af37;
             padding: 15px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #4a3b5c;
         }
 
         h1 {
             font-size: 1.5em;
-            font-weight: 600;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .subtitle {
@@ -48,69 +50,104 @@
         }
 
         .sidebar, .notes-panel {
-            background: white;
+            background: #2a1f3d;
             padding: 15px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #4a3b5c;
         }
 
         .center-panel {
             padding: 15px;
-            background: white;
+            background: #2a1f3d;
             position: relative;
         }
 
         .section {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #4a3b5c;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
         .section h2 {
             font-size: 0.9em;
-            margin-bottom: 10px;
-            color: #666;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            font-weight: 600;
+            margin: 0;
+            color: #d4af37;
+            padding: 12px 15px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            background: #1a0f2e;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section h2:hover {
+            background: #251835;
+        }
+
+        .section h2::after {
+            content: '▼';
+            font-size: 0.7em;
+            transition: transform 0.3s;
+        }
+
+        .section.collapsed h2::after {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            padding: 15px;
+            background: #2a1f3d;
+        }
+
+        .section.collapsed .section-content {
+            display: none;
         }
 
         button {
-            background: #007bff;
-            color: white;
-            border: 1px solid #007bff;
+            background: #4a3b5c;
+            color: #d4af37;
+            border: 1px solid #5c4a6e;
             padding: 10px 15px;
-            border-radius: 4px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.9em;
+            font-family: Georgia, serif;
             width: 100%;
             margin-bottom: 8px;
         }
 
         button:hover {
-            background: #0056b3;
-            border-color: #0056b3;
+            background: #5c4a6e;
+            border-color: #6e5a80;
         }
 
         button:active {
-            background: #004085;
+            background: #3a2b4c;
         }
 
         button.secondary {
-            background: #6c757d;
-            border-color: #6c757d;
+            background: #2a1f3d;
+            border-color: #4a3b5c;
+            color: #b8a58c;
         }
 
         button.secondary:hover {
-            background: #5a6268;
-            border-color: #5a6268;
+            background: #362a4a;
+            border-color: #5c4a6e;
         }
 
         button.danger {
-            background: #dc3545;
-            border-color: #dc3545;
+            background: #6d2f3a;
+            border-color: #8a3f4c;
+            color: #e8dcc8;
         }
 
         button.danger:hover {
-            background: #c82333;
-            border-color: #c82333;
+            background: #7d3f4a;
+            border-color: #9a4f5c;
         }
 
         button.small {
@@ -122,18 +159,18 @@
         textarea, input, select {
             width: 100%;
             padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: inherit;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
+            font-family: Georgia, serif;
             font-size: 0.9em;
             margin-bottom: 10px;
-            background: white;
-            color: #333;
+            background: #1a0f2e;
+            color: #e8dcc8;
         }
 
         textarea:focus, input:focus, select:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #d4af37;
         }
 
         textarea {
@@ -144,8 +181,8 @@
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: 500;
-            color: #333;
+            font-weight: 400;
+            color: #b8a58c;
             font-size: 0.9em;
         }
 
@@ -172,8 +209,8 @@
             grid-template-rows: repeat(5, 1fr);
             gap: 10px;
             padding: 15px;
-            background: #fafafa;
-            border: 1px solid #ddd;
+            background: #1a0f2e;
+            border: 1px solid #4a3b5c;
             aspect-ratio: 1;
             max-width: 100%;
             margin: 0 auto;
@@ -221,13 +258,14 @@
         }
 
         .position-label {
-            background: #333;
-            color: white;
+            background: #1a0f2e;
+            color: #d4af37;
             padding: 2px 6px;
-            border-radius: 3px;
+            border-radius: 2px;
             font-size: 0.65em;
             white-space: nowrap;
             margin-bottom: 2px;
+            border: 1px solid #4a3b5c;
         }
 
         .card-controls {
@@ -237,11 +275,11 @@
         }
 
         .card-controls button {
-            background: #6c757d;
-            color: white;
-            border: 1px solid #6c757d;
+            background: #2a1f3d;
+            color: #d4af37;
+            border: 1px solid #4a3b5c;
             padding: 2px 6px;
-            border-radius: 3px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.7em;
             width: auto;
@@ -249,39 +287,39 @@
         }
 
         .card-controls button:hover {
-            background: #5a6268;
-            border-color: #5a6268;
+            background: #3a2b4c;
+            border-color: #5c4a6e;
         }
 
         .grid-cell-empty {
-            border: 2px dashed #ddd;
+            border: 2px dashed #4a3b5c;
             border-radius: 4px;
-            background: #f9f9f9;
+            background: #251835;
         }
 
         .note-item {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background: #1a0f2e;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
             padding: 10px;
             margin-bottom: 10px;
             position: relative;
         }
 
         .note-item:hover {
-            background: #e9ecef;
+            background: #251835;
         }
 
         .note-text {
             font-size: 0.9em;
             line-height: 1.5;
             margin-bottom: 8px;
-            color: #333;
+            color: #e8dcc8;
         }
 
         .note-cards {
             font-size: 0.8em;
-            color: #666;
+            color: #b8a58c;
             font-style: italic;
         }
 
@@ -289,10 +327,10 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            background: #dc3545;
-            color: white;
-            border: 1px solid #dc3545;
-            border-radius: 3px;
+            background: #6d2f3a;
+            color: #e8dcc8;
+            border: 1px solid #8a3f4c;
+            border-radius: 2px;
             width: 24px;
             height: 24px;
             cursor: pointer;
@@ -302,8 +340,8 @@
         }
 
         .note-delete:hover {
-            background: #c82333;
-            border-color: #c82333;
+            background: #7d3f4a;
+            border-color: #9a4f5c;
         }
 
         .template-list {
@@ -311,9 +349,9 @@
         }
 
         .template-item {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background: #1a0f2e;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
             padding: 10px;
             margin-bottom: 8px;
             cursor: pointer;
@@ -321,23 +359,23 @@
         }
 
         .template-item:hover {
-            background: #e9ecef;
+            background: #251835;
         }
 
         .template-item.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
+            background: #4a3b5c;
+            color: #d4af37;
+            border-color: #d4af37;
         }
 
         .template-delete {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: #dc3545;
-            color: white;
-            border: 1px solid #dc3545;
-            border-radius: 3px;
+            background: #6d2f3a;
+            color: #e8dcc8;
+            border: 1px solid #8a3f4c;
+            border-radius: 2px;
             width: 20px;
             height: 20px;
             cursor: pointer;
@@ -352,23 +390,23 @@
         }
 
         .template-delete:hover {
-            background: #c82333;
-            border-color: #c82333;
+            background: #7d3f4a;
+            border-color: #9a4f5c;
         }
 
         .info-box {
-            background: #e7f3ff;
-            border-left: 3px solid #007bff;
+            background: #1a0f2e;
+            border-left: 3px solid #d4af37;
             padding: 10px;
             margin-bottom: 12px;
             font-size: 0.85em;
             line-height: 1.5;
-            color: #333;
+            color: #b8a58c;
         }
 
         .card-count {
             font-size: 0.85em;
-            color: #666;
+            color: #b8a58c;
             margin-top: 8px;
         }
 
@@ -390,10 +428,10 @@
         }
 
         .modal-content {
-            background: white;
-            border: 1px solid #ddd;
+            background: #2a1f3d;
+            border: 1px solid #4a3b5c;
             padding: 20px;
-            border-radius: 4px;
+            border-radius: 2px;
             max-width: 600px;
             width: 90%;
             max-height: 85vh;
@@ -402,10 +440,12 @@
 
         .modal h2 {
             margin-bottom: 15px;
-            color: #333;
+            color: #d4af37;
             font-size: 1.3em;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #4a3b5c;
             padding-bottom: 8px;
+            font-weight: 400;
+            letter-spacing: 1px;
         }
 
         .modal-buttons {
@@ -425,22 +465,22 @@
             margin: 12px 0;
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
             padding: 10px;
-            background: #fafafa;
+            background: #1a0f2e;
         }
 
         .deck-preview-card {
             position: relative;
             aspect-ratio: 2/3;
-            border-radius: 3px;
+            border-radius: 2px;
             overflow: hidden;
-            border: 1px solid #ddd;
+            border: 1px solid #4a3b5c;
         }
 
         .deck-preview-card:hover {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
         }
 
         .deck-preview-card img {
@@ -453,10 +493,10 @@
             position: absolute;
             top: 3px;
             right: 3px;
-            background: #dc3545;
-            color: white;
-            border: 1px solid #dc3545;
-            border-radius: 3px;
+            background: #6d2f3a;
+            color: #e8dcc8;
+            border: 1px solid #8a3f4c;
+            border-radius: 2px;
             width: 20px;
             height: 20px;
             cursor: pointer;
@@ -470,7 +510,7 @@
         }
 
         .deck-preview-card .remove-card:hover {
-            background: #c82333;
+            background: #7d3f4a;
         }
 
         .spread-builder {
@@ -485,41 +525,41 @@
             aspect-ratio: 1;
             max-width: 400px;
             margin: 15px auto;
-            background: #fafafa;
+            background: #1a0f2e;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
         }
 
         .grid-cell {
             aspect-ratio: 1;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            background: white;
+            border: 2px solid #4a3b5c;
+            border-radius: 2px;
+            background: #2a1f3d;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.75em;
             font-weight: 600;
-            color: #999;
+            color: #b8a58c;
             transition: all 0.2s;
         }
 
         .grid-cell:hover {
-            background: #f0f0f0;
-            border-color: #007bff;
+            background: #3a2b4c;
+            border-color: #d4af37;
         }
 
         .grid-cell.occupied {
-            background: #007bff;
-            color: white;
-            border-color: #0056b3;
+            background: #4a3b5c;
+            color: #d4af37;
+            border-color: #d4af37;
         }
 
         .grid-cell.occupied.horizontal {
-            background: #28a745;
-            border-color: #1e7e34;
+            background: #3d5c4a;
+            border-color: #5c8a6e;
         }
 
         .grid-controls {
@@ -537,23 +577,24 @@
         .spread-positions-list {
             max-height: 200px;
             overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
             padding: 10px;
-            background: #fafafa;
+            background: #1a0f2e;
             margin-bottom: 10px;
         }
 
         .position-item {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 3px;
+            background: #2a1f3d;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
             padding: 6px;
             margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.85em;
+            color: #e8dcc8;
         }
 
         .position-item button {
@@ -565,7 +606,7 @@
 
         .empty-state {
             text-align: center;
-            color: #999;
+            color: #b8a58c;
             padding: 50px 20px;
             font-size: 1em;
         }
@@ -583,8 +624,9 @@
         }
 
         .draw-mode-toggle button.active {
-            background: #0056b3;
-            border-color: #0056b3;
+            background: #5c4a6e;
+            border-color: #d4af37;
+            color: #d4af37;
         }
 
         .shuffle-control {
@@ -602,17 +644,17 @@
         }
 
         .screenshot-toggle button {
-            background: #28a745;
-            color: white;
-            border: 1px solid #28a745;
+            background: #4a3b5c;
+            color: #d4af37;
+            border: 1px solid #5c4a6e;
             padding: 10px 15px;
             font-size: 0.9em;
-            border-radius: 4px;
+            border-radius: 2px;
         }
 
         .screenshot-toggle button:hover {
-            background: #218838;
-            border-color: #218838;
+            background: #5c4a6e;
+            border-color: #d4af37;
         }
 
         /* Screenshot Mode Styles */
@@ -728,52 +770,59 @@
             <!-- Left Sidebar: Deck & Spread Management -->
             <div class="sidebar">
                 <div class="section">
-                    <h2>Your Deck</h2>
-                    <div class="info-box">
-                        Upload your card images. Supports JPG, PNG, GIF, WebP.
+                    <h2 onclick="toggleSection(this)">Your Deck</h2>
+                    <div class="section-content">
+                        <div class="info-box">
+                            Upload your card images. Supports JPG, PNG, GIF, WebP.
+                        </div>
+                        <button onclick="openDeckModal()">Import Deck Images</button>
+                        <div class="card-count" id="deckCount">No deck loaded</div>
                     </div>
-                    <button onclick="openDeckModal()">Import Deck Images</button>
-                    <div class="card-count" id="deckCount">No deck loaded</div>
                 </div>
 
                 <div class="section">
-                    <h2>Spread Templates</h2>
-                    <div class="template-list" id="templateList"></div>
-                    <button onclick="openSpreadModal()">Create Custom Spread</button>
+                    <h2 onclick="toggleSection(this)">Spread Templates</h2>
+                    <div class="section-content">
+                        <div class="template-list" id="templateList"></div>
+                        <button onclick="openSpreadModal()">Create Custom Spread</button>
+                    </div>
                 </div>
 
-                <div class="section">
-                    <h2>Shuffle Options</h2>
-                    <div class="shuffle-control">
-                        <label style="margin: 0; flex: 1;">Shuffles:</label>
-                        <input type="number" class="inline" id="shuffleCount" min="1" max="10" value="3">
+                <div class="section collapsed">
+                    <h2 onclick="toggleSection(this)">Shuffle Options</h2>
+                    <div class="section-content">
+                        <div class="shuffle-control">
+                            <label style="margin: 0; flex: 1;">Shuffles:</label>
+                            <input type="number" class="inline" id="shuffleCount" min="1" max="10" value="3">
+                        </div>
+                        <label>
+                            <input type="checkbox" id="autoShuffle"> Auto-shuffle on draw
+                        </label>
+                        <label>
+                            <input type="checkbox" id="noReversals" onchange="updateNoReversals()"> No reversals
+                        </label>
+                        <button class="secondary" onclick="manualShuffle()">Shuffle Deck</button>
                     </div>
-                    <label>
-                        <input type="checkbox" id="autoShuffle"> Auto-shuffle on draw
-                    </label>
-                    <label>
-                        <input type="checkbox" id="noReversals" onchange="updateNoReversals()"> No reversals
-                    </label>
-                    <button class="secondary" onclick="manualShuffle()">Shuffle Deck</button>
                 </div>
 
-                <div class="section">
-                    <h2>Draw Mode</h2>
-                    <div class="draw-mode-toggle">
-                        <button id="drawAllBtn" class="active" onclick="setDrawMode('all')">Draw All</button>
-                        <button id="drawSingleBtn" onclick="setDrawMode('single')">Draw Single</button>
+                <div class="section collapsed">
+                    <h2 onclick="toggleSection(this)">Draw Mode</h2>
+                    <div class="section-content">
+                        <div class="draw-mode-toggle">
+                            <button id="drawAllBtn" class="active" onclick="setDrawMode('all')">Draw All</button>
+                            <button id="drawSingleBtn" onclick="setDrawMode('single')">Draw Single</button>
+                        </div>
+                        <button onclick="drawCards()">Draw Cards</button>
+                        <button class="secondary" onclick="shuffleBack()">Return All Cards</button>
+                        <button class="danger" onclick="clearReading()">Clear Reading</button>
                     </div>
-                    <button onclick="drawCards()">Draw Cards</button>
-                    <button class="secondary" onclick="shuffleBack()">Return All Cards</button>
-                    <button class="danger" onclick="clearReading()">Clear Reading</button>
                 </div>
             </div>
 
             <!-- Center: Card Spread Display -->
             <div class="center-panel">
-                <h2 style="margin-bottom: 20px; color: #2d3748;">Current Reading</h2>
                 <div class="spread-container" id="spreadContainer">
-                    <div class="empty-state">
+                    <div style="grid-column: 1 / -1; grid-row: 1 / -1;" class="empty-state">
                         Import a deck and select a spread template to begin
                     </div>
                 </div>
@@ -781,18 +830,22 @@
 
             <!-- Right Sidebar: Notes -->
             <div class="notes-panel">
-                <div class="section">
-                    <h2>Reading Notes</h2>
-                    <textarea id="noteInput" placeholder="Type your note here..."></textarea>
-                    <label>
-                        <input type="checkbox" id="includeHighlighted"> Include highlighted cards
-                    </label>
-                    <button onclick="addNote()">Add Note</button>
+                <div class="section collapsed">
+                    <h2 onclick="toggleSection(this)">Reading Notes</h2>
+                    <div class="section-content">
+                        <textarea id="noteInput" placeholder="Type your note here..."></textarea>
+                        <label>
+                            <input type="checkbox" id="includeHighlighted"> Include highlighted cards
+                        </label>
+                        <button onclick="addNote()">Add Note</button>
+                    </div>
                 </div>
 
-                <div class="section">
-                    <h2>Saved Notes</h2>
-                    <div id="notesList"></div>
+                <div class="section collapsed">
+                    <h2 onclick="toggleSection(this)">Saved Notes</h2>
+                    <div class="section-content">
+                        <div id="notesList"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1008,6 +1061,11 @@
             if (saved) {
                 state = JSON.parse(saved);
             }
+        }
+
+        // Toggle section collapse/expand
+        function toggleSection(header) {
+            header.parentElement.classList.toggle('collapsed');
         }
 
         // Shuffle function - shuffles both card order and orientations
