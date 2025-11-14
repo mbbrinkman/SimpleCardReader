@@ -167,20 +167,32 @@
         }
 
         .spread-container {
-            position: relative;
-            min-height: 400px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            padding: 15px;
             background: #fafafa;
             border: 1px solid #ddd;
+            aspect-ratio: 1;
+            max-width: 100%;
+            margin: 0 auto;
         }
 
         .card-position {
-            position: absolute;
-            cursor: move;
-            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 0;
         }
 
         .card-wrapper {
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
 
         .card-wrapper.highlighted {
@@ -188,13 +200,20 @@
         }
 
         .card-image {
-            width: 100px;
+            max-width: 100%;
+            max-height: 100%;
             height: auto;
             border-radius: 4px;
             border: 2px solid white;
             background: white;
             display: block;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+
+        .card-image.horizontal {
+            width: auto;
+            height: 100%;
         }
 
         .card-wrapper.highlighted .card-image {
@@ -202,37 +221,29 @@
         }
 
         .position-label {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
             background: #333;
             color: white;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 3px;
-            font-size: 0.7em;
+            font-size: 0.65em;
             white-space: nowrap;
-            z-index: 10;
+            margin-bottom: 2px;
         }
 
         .card-controls {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
-            gap: 4px;
-            z-index: 10;
+            gap: 3px;
+            margin-top: 2px;
         }
 
         .card-controls button {
             background: #6c757d;
             color: white;
             border: 1px solid #6c757d;
-            padding: 4px 8px;
+            padding: 2px 6px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 0.75em;
+            font-size: 0.7em;
             width: auto;
             margin: 0;
         }
@@ -240,6 +251,12 @@
         .card-controls button:hover {
             background: #5a6268;
             border-color: #5a6268;
+        }
+
+        .grid-cell-empty {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
         }
 
         .note-item {
@@ -456,31 +473,94 @@
             background: #c82333;
         }
 
-        .position-inputs {
-            margin: 12px 0;
+        .spread-builder {
+            margin: 15px 0;
         }
 
-        .position-input-group {
+        .spread-builder-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 6px;
+            aspect-ratio: 1;
+            max-width: 400px;
+            margin: 15px auto;
             background: #fafafa;
             padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
             border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
-        .position-input-group label {
-            font-size: 0.85em;
-            margin-bottom: 5px;
+        .grid-cell {
+            aspect-ratio: 1;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.2s;
         }
 
-        .position-input-group input {
-            margin-bottom: 6px;
+        .grid-cell:hover {
+            background: #f0f0f0;
+            border-color: #007bff;
         }
 
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+        .grid-cell.occupied {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        .grid-cell.occupied.horizontal {
+            background: #28a745;
+            border-color: #1e7e34;
+        }
+
+        .grid-controls {
+            display: flex;
             gap: 8px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .grid-controls button {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .spread-positions-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
+
+        .position-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+        }
+
+        .position-item button {
+            width: auto;
+            padding: 3px 8px;
+            margin: 0;
+            font-size: 0.75em;
         }
 
         .empty-state {
@@ -603,22 +683,19 @@
                 font-size: 0.85em;
             }
 
-            .card-image {
-                width: 80px;
+            .spread-container {
+                gap: 6px;
+                padding: 8px;
             }
 
             .position-label {
-                font-size: 0.65em;
-                padding: 2px 6px;
+                font-size: 0.6em;
+                padding: 1px 4px;
             }
 
             .card-controls button {
-                padding: 3px 6px;
-                font-size: 0.7em;
-            }
-
-            .spread-container {
-                min-height: 300px;
+                padding: 2px 4px;
+                font-size: 0.65em;
             }
 
             .modal-content {
@@ -627,6 +704,16 @@
 
             .deck-preview {
                 grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+
+            .spread-builder-grid {
+                max-width: 300px;
+                gap: 4px;
+                padding: 6px;
+            }
+
+            .grid-cell {
+                font-size: 0.7em;
             }
         }
     </style>
@@ -748,14 +835,19 @@
             <label>Spread Name</label>
             <input type="text" id="spreadName" placeholder="My Custom Spread">
 
-            <label>Number of Positions</label>
-            <input type="number" id="numPositions" min="1" max="20" value="3" onchange="generatePositionInputs()">
-
-            <div id="positionInputs" class="position-inputs"></div>
-
             <div class="info-box">
-                Define each card position with a name, X/Y coordinates (pixels from top-left), and rotation (degrees).
+                Click grid cells to place cards. Blue = vertical, Green = horizontal. Click again to toggle orientation, or click a third time to remove.
             </div>
+
+            <div class="grid-controls">
+                <button class="secondary" onclick="clearSpreadGrid()">Clear Grid</button>
+            </div>
+
+            <div class="spread-builder">
+                <div class="spread-builder-grid" id="spreadBuilderGrid"></div>
+            </div>
+
+            <div class="spread-positions-list" id="spreadPositionsList"></div>
 
             <div class="modal-buttons">
                 <button onclick="saveSpread()">Save Spread</button>
@@ -781,111 +873,110 @@
         };
 
         let pendingDeckImages = [];
+        let pendingSpreadPositions = [];
         let screenshotMode = false;
 
-        // Default spread templates with variety
+        // Default spread templates with 5x5 grid positions
+        // Grid positions: row (0-4), col (0-4), rotation (0=vertical, 90=horizontal)
         const defaultSpreads = [
             {
                 name: "Single Card",
                 positions: [
-                    { name: "Card 1", x: 325, y: 150, rotation: 0 }
+                    { name: "Card 1", row: 2, col: 2, rotation: 0 }
                 ]
             },
             {
                 name: "Three Card Row",
                 positions: [
-                    { name: "Card 1", x: 100, y: 150, rotation: 0 },
-                    { name: "Card 2", x: 300, y: 150, rotation: 0 },
-                    { name: "Card 3", x: 500, y: 150, rotation: 0 }
+                    { name: "Card 1", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 3", row: 2, col: 3, rotation: 0 }
                 ]
             },
             {
                 name: "Five Card Cross",
                 positions: [
-                    { name: "Card 1", x: 300, y: 200, rotation: 0 },
-                    { name: "Card 2", x: 150, y: 200, rotation: 0 },
-                    { name: "Card 3", x: 300, y: 50, rotation: 0 },
-                    { name: "Card 4", x: 300, y: 350, rotation: 0 },
-                    { name: "Card 5", x: 450, y: 200, rotation: 0 }
+                    { name: "Card 1", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 3", row: 1, col: 2, rotation: 0 },
+                    { name: "Card 4", row: 3, col: 2, rotation: 0 },
+                    { name: "Card 5", row: 2, col: 3, rotation: 0 }
                 ]
             },
             {
                 name: "Seven Card Horseshoe",
                 positions: [
-                    { name: "Card 1", x: 100, y: 300, rotation: -30 },
-                    { name: "Card 2", x: 170, y: 150, rotation: -15 },
-                    { name: "Card 3", x: 280, y: 50, rotation: 0 },
-                    { name: "Card 4", x: 390, y: 50, rotation: 0 },
-                    { name: "Card 5", x: 500, y: 150, rotation: 15 },
-                    { name: "Card 6", x: 570, y: 300, rotation: 30 },
-                    { name: "Card 7", x: 335, y: 250, rotation: 0 }
+                    { name: "Card 1", row: 3, col: 0, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 3", row: 1, col: 1, rotation: 0 },
+                    { name: "Card 4", row: 0, col: 2, rotation: 0 },
+                    { name: "Card 5", row: 1, col: 3, rotation: 0 },
+                    { name: "Card 6", row: 2, col: 3, rotation: 0 },
+                    { name: "Card 7", row: 3, col: 4, rotation: 0 }
                 ]
             },
             {
                 name: "Four Corners",
                 positions: [
-                    { name: "Card 1", x: 150, y: 100, rotation: 0 },
-                    { name: "Card 2", x: 450, y: 100, rotation: 0 },
-                    { name: "Card 3", x: 150, y: 300, rotation: 0 },
-                    { name: "Card 4", x: 450, y: 300, rotation: 0 }
-                ]
-            },
-            {
-                name: "Six Card Circle",
-                positions: [
-                    { name: "Card 1", x: 335, y: 50, rotation: 0 },
-                    { name: "Card 2", x: 485, y: 125, rotation: 60 },
-                    { name: "Card 3", x: 485, y: 275, rotation: 120 },
-                    { name: "Card 4", x: 335, y: 350, rotation: 180 },
-                    { name: "Card 5", x: 185, y: 275, rotation: 240 },
-                    { name: "Card 6", x: 185, y: 125, rotation: 300 }
+                    { name: "Card 1", row: 1, col: 1, rotation: 0 },
+                    { name: "Card 2", row: 1, col: 3, rotation: 0 },
+                    { name: "Card 3", row: 3, col: 1, rotation: 0 },
+                    { name: "Card 4", row: 3, col: 3, rotation: 0 }
                 ]
             },
             {
                 name: "Pyramid (Six Cards)",
                 positions: [
-                    { name: "Card 1", x: 325, y: 50, rotation: 0 },
-                    { name: "Card 2", x: 225, y: 150, rotation: 0 },
-                    { name: "Card 3", x: 425, y: 150, rotation: 0 },
-                    { name: "Card 4", x: 125, y: 250, rotation: 0 },
-                    { name: "Card 5", x: 325, y: 250, rotation: 0 },
-                    { name: "Card 6", x: 525, y: 250, rotation: 0 }
+                    { name: "Card 1", row: 0, col: 2, rotation: 0 },
+                    { name: "Card 2", row: 1, col: 1, rotation: 0 },
+                    { name: "Card 3", row: 1, col: 3, rotation: 0 },
+                    { name: "Card 4", row: 2, col: 0, rotation: 0 },
+                    { name: "Card 5", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 6", row: 2, col: 4, rotation: 0 }
                 ]
             },
             {
                 name: "Two Card Comparison",
                 positions: [
-                    { name: "Card 1", x: 200, y: 150, rotation: 0 },
-                    { name: "Card 2", x: 450, y: 150, rotation: 0 }
+                    { name: "Card 1", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 3, rotation: 0 }
                 ]
             },
             {
                 name: "Nine Card Grid",
                 positions: [
-                    { name: "Card 1", x: 150, y: 80, rotation: 0 },
-                    { name: "Card 2", x: 325, y: 80, rotation: 0 },
-                    { name: "Card 3", x: 500, y: 80, rotation: 0 },
-                    { name: "Card 4", x: 150, y: 200, rotation: 0 },
-                    { name: "Card 5", x: 325, y: 200, rotation: 0 },
-                    { name: "Card 6", x: 500, y: 200, rotation: 0 },
-                    { name: "Card 7", x: 150, y: 320, rotation: 0 },
-                    { name: "Card 8", x: 325, y: 320, rotation: 0 },
-                    { name: "Card 9", x: 500, y: 320, rotation: 0 }
+                    { name: "Card 1", row: 1, col: 1, rotation: 0 },
+                    { name: "Card 2", row: 1, col: 2, rotation: 0 },
+                    { name: "Card 3", row: 1, col: 3, rotation: 0 },
+                    { name: "Card 4", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 5", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 6", row: 2, col: 3, rotation: 0 },
+                    { name: "Card 7", row: 3, col: 1, rotation: 0 },
+                    { name: "Card 8", row: 3, col: 2, rotation: 0 },
+                    { name: "Card 9", row: 3, col: 3, rotation: 0 }
                 ]
             },
             {
                 name: "Celtic Cross (Ten Cards)",
                 positions: [
-                    { name: "Card 1", x: 300, y: 200, rotation: 0 },
-                    { name: "Card 2", x: 300, y: 200, rotation: 90 },
-                    { name: "Card 3", x: 300, y: 320, rotation: 0 },
-                    { name: "Card 4", x: 180, y: 200, rotation: 0 },
-                    { name: "Card 5", x: 300, y: 80, rotation: 0 },
-                    { name: "Card 6", x: 420, y: 200, rotation: 0 },
-                    { name: "Card 7", x: 550, y: 320, rotation: 0 },
-                    { name: "Card 8", x: 550, y: 230, rotation: 0 },
-                    { name: "Card 9", x: 550, y: 140, rotation: 0 },
-                    { name: "Card 10", x: 550, y: 50, rotation: 0 }
+                    { name: "Card 1", row: 2, col: 1, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 1, rotation: 90 },
+                    { name: "Card 3", row: 3, col: 1, rotation: 0 },
+                    { name: "Card 4", row: 2, col: 0, rotation: 0 },
+                    { name: "Card 5", row: 1, col: 1, rotation: 0 },
+                    { name: "Card 6", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 7", row: 0, col: 4, rotation: 0 },
+                    { name: "Card 8", row: 1, col: 4, rotation: 0 },
+                    { name: "Card 9", row: 2, col: 4, rotation: 0 },
+                    { name: "Card 10", row: 3, col: 4, rotation: 0 }
+                ]
+            },
+            {
+                name: "Three Card Column",
+                positions: [
+                    { name: "Card 1", row: 1, col: 2, rotation: 0 },
+                    { name: "Card 2", row: 2, col: 2, rotation: 0 },
+                    { name: "Card 3", row: 3, col: 2, rotation: 0 }
                 ]
             }
         ];
@@ -1108,35 +1199,102 @@
 
         function openSpreadModal() {
             document.getElementById('spreadName').value = '';
-            document.getElementById('numPositions').value = 3;
-            generatePositionInputs();
+            pendingSpreadPositions = [];
+            renderSpreadBuilderGrid();
+            renderSpreadPositionsList();
             document.getElementById('spreadModal').classList.add('active');
         }
 
         function closeSpreadModal() {
             document.getElementById('spreadModal').classList.remove('active');
+            pendingSpreadPositions = [];
         }
 
-        function generatePositionInputs() {
-            const num = parseInt(document.getElementById('numPositions').value) || 3;
-            const container = document.getElementById('positionInputs');
-            container.innerHTML = '';
+        function renderSpreadBuilderGrid() {
+            const grid = document.getElementById('spreadBuilderGrid');
+            let html = '';
 
-            for (let i = 0; i < num; i++) {
-                const x = 150 + (i * 180);
-                const y = 150;
-                container.innerHTML += `
-                    <div class="position-input-group">
-                        <label>Position ${i + 1}</label>
-                        <input type="text" id="posName${i}" placeholder="Name" value="Position ${i + 1}">
-                        <div class="input-row">
-                            <input type="number" id="posX${i}" placeholder="X" value="${x}">
-                            <input type="number" id="posY${i}" placeholder="Y" value="${y}">
-                            <input type="number" id="posRot${i}" placeholder="Rotation" value="0">
-                        </div>
-                    </div>
-                `;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const pos = pendingSpreadPositions.find(p => p.row === row && p.col === col);
+                    const classes = ['grid-cell'];
+                    let content = '';
+
+                    if (pos) {
+                        classes.push('occupied');
+                        if (pos.rotation === 90) {
+                            classes.push('horizontal');
+                        }
+                        content = pendingSpreadPositions.indexOf(pos) + 1;
+                    }
+
+                    html += `<div class="${classes.join(' ')}" onclick="toggleGridCell(${row}, ${col})">${content}</div>`;
+                }
             }
+
+            grid.innerHTML = html;
+        }
+
+        function toggleGridCell(row, col) {
+            const existingIndex = pendingSpreadPositions.findIndex(p => p.row === row && p.col === col);
+
+            if (existingIndex === -1) {
+                // Add new position (vertical)
+                pendingSpreadPositions.push({
+                    row,
+                    col,
+                    rotation: 0,
+                    name: `Card ${pendingSpreadPositions.length + 1}`
+                });
+            } else {
+                const pos = pendingSpreadPositions[existingIndex];
+                if (pos.rotation === 0) {
+                    // Toggle to horizontal
+                    pos.rotation = 90;
+                } else {
+                    // Remove position
+                    pendingSpreadPositions.splice(existingIndex, 1);
+                    // Renumber remaining positions
+                    pendingSpreadPositions.forEach((p, idx) => {
+                        p.name = `Card ${idx + 1}`;
+                    });
+                }
+            }
+
+            renderSpreadBuilderGrid();
+            renderSpreadPositionsList();
+        }
+
+        function clearSpreadGrid() {
+            pendingSpreadPositions = [];
+            renderSpreadBuilderGrid();
+            renderSpreadPositionsList();
+        }
+
+        function renderSpreadPositionsList() {
+            const list = document.getElementById('spreadPositionsList');
+
+            if (pendingSpreadPositions.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #999; padding: 10px;">No positions added yet</div>';
+                return;
+            }
+
+            list.innerHTML = pendingSpreadPositions.map((pos, idx) => `
+                <div class="position-item">
+                    <span>${pos.name} (Row ${pos.row + 1}, Col ${pos.col + 1}, ${pos.rotation === 90 ? 'Horizontal' : 'Vertical'})</span>
+                    <button class="danger" onclick="removeSpreadPosition(${idx})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeSpreadPosition(idx) {
+            pendingSpreadPositions.splice(idx, 1);
+            // Renumber remaining positions
+            pendingSpreadPositions.forEach((p, i) => {
+                p.name = `Card ${i + 1}`;
+            });
+            renderSpreadBuilderGrid();
+            renderSpreadPositionsList();
         }
 
         function saveSpread() {
@@ -1146,18 +1304,15 @@
                 return;
             }
 
-            const num = parseInt(document.getElementById('numPositions').value);
-            const positions = [];
-
-            for (let i = 0; i < num; i++) {
-                const posName = document.getElementById(`posName${i}`).value.trim() || `Position ${i + 1}`;
-                const x = parseInt(document.getElementById(`posX${i}`).value) || 0;
-                const y = parseInt(document.getElementById(`posY${i}`).value) || 0;
-                const rotation = parseInt(document.getElementById(`posRot${i}`).value) || 0;
-                positions.push({ name: posName, x, y, rotation });
+            if (pendingSpreadPositions.length === 0) {
+                alert('Please add at least one card position');
+                return;
             }
 
-            state.spreads.push({ name, positions });
+            state.spreads.push({
+                name,
+                positions: [...pendingSpreadPositions]
+            });
             saveState();
             renderTemplates();
             closeSpreadModal();
@@ -1298,7 +1453,7 @@
             const container = document.getElementById('spreadContainer');
 
             if (state.currentSpread === null) {
-                container.innerHTML = '<div class="empty-state">Select a spread template to begin</div>';
+                container.innerHTML = '<div style="grid-column: 1 / -1; grid-row: 1 / -1;" class="empty-state">Select a spread template to begin</div>';
                 return;
             }
 
@@ -1306,7 +1461,7 @@
 
             if (state.drawnCards.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
+                    <div style="grid-column: 1 / -1; grid-row: 1 / -1;" class="empty-state">
                         <strong>${spread.name}</strong><br><br>
                         Click "Draw Cards" to begin your reading
                     </div>
@@ -1314,39 +1469,58 @@
                 return;
             }
 
-            container.innerHTML = spread.positions.map((pos, idx) => {
-                if (idx >= state.drawnCards.length) {
-                    // Position not yet filled (single card mode)
-                    return `
-                        <div class="card-position" style="left: ${pos.x}px; top: ${pos.y}px;">
-                            <div class="position-label">${pos.name}</div>
-                            <div style="width: 150px; height: 225px; border: 3px dashed #cbd5e0; border-radius: 8px; background: #f7fafc;"></div>
+            let html = '';
+
+            // Create all 25 grid cells
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    // Check if this cell has a position defined in the spread
+                    const posIndex = spread.positions.findIndex(p => p.row === row && p.col === col);
+
+                    if (posIndex === -1) {
+                        // Empty cell
+                        html += '<div class="card-position"></div>';
+                        continue;
+                    }
+
+                    const pos = spread.positions[posIndex];
+                    const drawn = state.drawnCards[posIndex];
+
+                    if (!drawn) {
+                        // Position defined but not yet drawn (single card mode)
+                        html += `
+                            <div class="card-position">
+                                <div class="grid-cell-empty" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        `;
+                        continue;
+                    }
+
+                    const highlighted = state.highlightedCards.includes(posIndex);
+                    const totalRotation = (drawn.rotation || 0) + (drawn.reversed ? 180 : 0);
+                    const isHorizontal = (pos.rotation === 90);
+
+                    html += `
+                        <div class="card-position">
+                            <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
+                                 onclick="toggleHighlight(${posIndex}, event)">
+                                <div class="position-label">${pos.name}</div>
+                                <img src="${drawn.card.data}"
+                                     alt="${drawn.card.name}"
+                                     class="card-image ${isHorizontal ? 'horizontal' : ''}"
+                                     style="transform: rotate(${totalRotation}deg);">
+                                <div class="card-controls">
+                                    <button onclick="event.stopPropagation(); rotateCard(${posIndex}, -1)" title="Rotate">↶</button>
+                                    <button onclick="event.stopPropagation(); rotateCard(${posIndex}, 1)" title="Rotate">↷</button>
+                                    <button onclick="event.stopPropagation(); flipCard(${posIndex})" title="Flip">⇅</button>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
+            }
 
-                const drawn = state.drawnCards[idx];
-                const highlighted = state.highlightedCards.includes(idx);
-                const totalRotation = (drawn.rotation || 0) + (drawn.reversed ? 180 : 0);
-
-                return `
-                    <div class="card-position" style="left: ${pos.x}px; top: ${pos.y}px;">
-                        <div class="position-label">${pos.name}</div>
-                        <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
-                             onclick="toggleHighlight(${idx}, event)"
-                             style="transform: rotate(${totalRotation}deg);">
-                            <img src="${drawn.card.data}"
-                                 alt="${drawn.card.name}"
-                                 class="card-image">
-                        </div>
-                        <div class="card-controls">
-                            <button onclick="event.stopPropagation(); rotateCard(${idx}, -1)" title="Rotate Left">↶</button>
-                            <button onclick="event.stopPropagation(); rotateCard(${idx}, 1)" title="Rotate Right">↷</button>
-                            <button onclick="event.stopPropagation(); flipCard(${idx})" title="Flip">⇅</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            container.innerHTML = html;
         }
 
         // Notes
