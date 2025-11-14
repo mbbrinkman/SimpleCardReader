@@ -928,6 +928,27 @@
         let pendingDeckImages = [];
         let pendingSpreadPositions = [];
         let screenshotMode = false;
+        let db = null;
+
+        // IndexedDB setup
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('CardReaderDB', 1);
+
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    const database = event.target.result;
+                    if (!database.objectStoreNames.contains('state')) {
+                        database.createObjectStore('state');
+                    }
+                };
+            });
+        }
 
         // Default spread templates with 5x5 grid positions
         // Grid positions: row (0-4), col (0-4), rotation (0=vertical, 90=horizontal)
@@ -1035,11 +1056,12 @@
         ];
 
         // Initialize app
-        function init() {
-            loadState();
+        async function init() {
+            await initDB();
+            await loadState();
             if (state.spreads.length === 0) {
                 state.spreads = [...defaultSpreads];
-                saveState();
+                await saveState();
             }
             renderTemplates();
             updateDeckCount();
@@ -1051,16 +1073,34 @@
             }
         }
 
-        // Local storage
-        function saveState() {
-            localStorage.setItem('cardReaderState', JSON.stringify(state));
+        // IndexedDB storage
+        async function saveState() {
+            if (!db) return;
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['state'], 'readwrite');
+                const store = transaction.objectStore('state');
+                const request = store.put(state, 'cardReaderState');
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
         }
 
-        function loadState() {
-            const saved = localStorage.getItem('cardReaderState');
-            if (saved) {
-                state = JSON.parse(saved);
-            }
+        async function loadState() {
+            if (!db) return;
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['state'], 'readonly');
+                const store = transaction.objectStore('state');
+                const request = store.get('cardReaderState');
+
+                request.onsuccess = () => {
+                    if (request.result) {
+                        state = request.result;
+                    }
+                    resolve();
+                };
+                request.onerror = () => reject(request.error);
+            });
         }
 
         // Toggle section collapse/expand
