@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Card Reader</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&display=swap');
-
         * {
             margin: 0;
             padding: 0;
@@ -14,216 +12,165 @@
         }
 
         body {
-            font-family: 'Crimson Pro', 'Georgia', serif;
-            background: #1a1a2e;
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(88, 86, 214, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(142, 84, 233, 0.05) 0%, transparent 50%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 30px;
-            color: #e8e8e8;
+            padding: 10px;
+            color: #333;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 100%;
             margin: 0 auto;
-            background: #16213e;
-            border: 1px solid rgba(197, 151, 100, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            overflow: hidden;
+            background: white;
+            border: 1px solid #ddd;
         }
 
         header {
-            background: linear-gradient(to bottom, #0f1922, #16213e);
-            color: #c59764;
-            padding: 30px 40px;
-            border-bottom: 2px solid rgba(197, 151, 100, 0.3);
-            position: relative;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #c59764, transparent);
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
         }
 
         h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.2em;
-            margin-bottom: 8px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 1.5em;
+            font-weight: 600;
         }
 
         .subtitle {
-            opacity: 0.7;
-            font-size: 0.95em;
-            letter-spacing: 1px;
-            font-style: italic;
+            display: none;
         }
 
         .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr 350px;
-            gap: 0;
-            min-height: 600px;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar, .notes-panel {
-            background: #0f1922;
-            padding: 25px;
-            border-right: 1px solid rgba(197, 151, 100, 0.15);
-        }
-
-        .notes-panel {
-            border-right: none;
-            border-left: 1px solid rgba(197, 151, 100, 0.15);
+            background: white;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
         }
 
         .center-panel {
-            padding: 35px;
-            background: #1a1a2e;
+            padding: 15px;
+            background: white;
             position: relative;
         }
 
         .section {
-            margin-bottom: 28px;
+            margin-bottom: 20px;
         }
 
         .section h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 1em;
-            margin-bottom: 15px;
-            color: #c59764;
-            border-bottom: 1px solid rgba(197, 151, 100, 0.3);
-            padding-bottom: 8px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            color: #666;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
             font-weight: 600;
         }
 
         button {
-            background: linear-gradient(to bottom, #c59764, #a67c52);
-            color: #0f1922;
-            border: 1px solid rgba(197, 151, 100, 0.4);
-            padding: 11px 18px;
-            border-radius: 2px;
+            background: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+            padding: 10px 15px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 0.9em;
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 8px;
         }
 
         button:hover {
-            background: linear-gradient(to bottom, #d4a574, #b88c62);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(197, 151, 100, 0.3);
-            border-color: rgba(197, 151, 100, 0.6);
+            background: #0056b3;
+            border-color: #0056b3;
         }
 
         button:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            background: #004085;
         }
 
         button.secondary {
-            background: linear-gradient(to bottom, #2d3748, #1a202c);
-            color: #c59764;
-            border-color: rgba(197, 151, 100, 0.3);
+            background: #6c757d;
+            border-color: #6c757d;
         }
 
         button.secondary:hover {
-            background: linear-gradient(to bottom, #3d4758, #2a303c);
-            border-color: rgba(197, 151, 100, 0.5);
+            background: #5a6268;
+            border-color: #5a6268;
         }
 
         button.danger {
-            background: linear-gradient(to bottom, #8b4545, #6b3030);
-            color: #e8e8e8;
-            border-color: rgba(139, 69, 69, 0.4);
+            background: #dc3545;
+            border-color: #dc3545;
         }
 
         button.danger:hover {
-            background: linear-gradient(to bottom, #9b5555, #7b4040);
-            border-color: rgba(139, 69, 69, 0.6);
+            background: #c82333;
+            border-color: #c82333;
         }
 
         button.small {
-            padding: 6px 12px;
+            padding: 6px 10px;
             font-size: 0.8em;
             width: auto;
         }
 
         textarea, input, select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(197, 151, 100, 0.3);
-            border-radius: 2px;
-            font-family: 'Crimson Pro', serif;
-            font-size: 0.95em;
-            margin-bottom: 12px;
-            background: rgba(15, 25, 34, 0.6);
-            color: #e8e8e8;
-            transition: all 0.3s;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            background: white;
+            color: #333;
         }
 
         textarea:focus, input:focus, select:focus {
             outline: none;
-            border-color: rgba(197, 151, 100, 0.6);
-            background: rgba(15, 25, 34, 0.8);
-            box-shadow: 0 0 0 3px rgba(197, 151, 100, 0.1);
+            border-color: #007bff;
         }
 
         textarea {
             resize: vertical;
-            min-height: 110px;
+            min-height: 80px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 500;
-            color: #c59764;
+            color: #333;
             font-size: 0.9em;
-            letter-spacing: 0.5px;
         }
 
         input[type="file"] {
-            padding: 8px;
+            padding: 5px;
             cursor: pointer;
         }
 
         input[type="number"].inline {
-            width: 70px;
+            width: 60px;
             display: inline-block;
-            padding: 8px;
-            margin: 0 8px;
+            padding: 6px;
+            margin: 0 5px;
         }
 
         input[type="checkbox"] {
             width: auto;
-            margin-right: 8px;
-            accent-color: #c59764;
+            margin-right: 6px;
         }
 
         .spread-container {
             position: relative;
-            min-height: 500px;
-            background: rgba(15, 25, 34, 0.4);
-            border: 1px solid rgba(197, 151, 100, 0.15);
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            min-height: 400px;
+            background: #fafafa;
+            border: 1px solid #ddd;
         }
 
         .card-position {
@@ -234,127 +181,112 @@
 
         .card-wrapper {
             position: relative;
-            transition: transform 0.3s;
         }
 
         .card-wrapper.highlighted {
-            filter: drop-shadow(0 0 10px rgba(246, 173, 85, 0.8));
+            filter: drop-shadow(0 0 8px #ffa500);
         }
 
         .card-image {
-            width: 150px;
+            width: 100px;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: 3px solid white;
+            border-radius: 4px;
+            border: 2px solid white;
             background: white;
             display: block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .card-wrapper.highlighted .card-image {
-            border-color: #c59764;
-            box-shadow: 0 0 20px rgba(197, 151, 100, 0.6), 0 4px 12px rgba(0,0,0,0.3);
+            border-color: #ffa500;
         }
 
         .position-label {
             position: absolute;
-            top: -28px;
+            top: -22px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(to bottom, #0f1922, #000);
-            color: #c59764;
-            padding: 5px 14px;
-            border: 1px solid rgba(197, 151, 100, 0.3);
-            border-radius: 2px;
-            font-family: 'Cinzel', serif;
+            background: #333;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
             font-size: 0.7em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
             white-space: nowrap;
             z-index: 10;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
         }
 
         .card-controls {
             position: absolute;
-            bottom: -38px;
+            bottom: -30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 6px;
+            gap: 4px;
             z-index: 10;
         }
 
         .card-controls button {
-            background: linear-gradient(to bottom, #2d3748, #1a202c);
-            color: #c59764;
-            border: 1px solid rgba(197, 151, 100, 0.3);
-            padding: 6px 11px;
-            border-radius: 2px;
+            background: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+            padding: 4px 8px;
+            border-radius: 3px;
             cursor: pointer;
             font-size: 0.75em;
-            font-family: 'Crimson Pro', serif;
             width: auto;
             margin: 0;
-            transition: all 0.2s;
         }
 
         .card-controls button:hover {
-            background: linear-gradient(to bottom, #3d4758, #2a303c);
-            border-color: rgba(197, 151, 100, 0.5);
+            background: #5a6268;
+            border-color: #5a6268;
         }
 
         .note-item {
-            background: rgba(15, 25, 34, 0.6);
-            border: 1px solid rgba(197, 151, 100, 0.2);
-            border-radius: 2px;
-            padding: 14px;
-            margin-bottom: 12px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
             position: relative;
-            transition: all 0.3s;
         }
 
         .note-item:hover {
-            background: rgba(15, 25, 34, 0.8);
-            border-color: rgba(197, 151, 100, 0.3);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            background: #e9ecef;
         }
 
         .note-text {
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            color: #e8e8e8;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: #333;
         }
 
         .note-cards {
             font-size: 0.8em;
-            color: #c59764;
+            color: #666;
             font-style: italic;
-            opacity: 0.8;
         }
 
         .note-delete {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(to bottom, #8b4545, #6b3030);
-            color: #e8e8e8;
-            border: 1px solid rgba(139, 69, 69, 0.4);
-            border-radius: 2px;
-            width: 26px;
-            height: 26px;
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            border: 1px solid #dc3545;
+            border-radius: 3px;
+            width: 24px;
+            height: 24px;
             cursor: pointer;
             font-size: 0.9em;
             padding: 0;
             margin: 0;
-            transition: all 0.2s;
         }
 
         .note-delete:hover {
-            background: linear-gradient(to bottom, #9b5555, #7b4040);
-            border-color: rgba(139, 69, 69, 0.6);
+            background: #c82333;
+            border-color: #c82333;
         }
 
         .template-list {
@@ -362,44 +294,40 @@
         }
 
         .template-item {
-            background: rgba(15, 25, 34, 0.6);
-            border: 1px solid rgba(197, 151, 100, 0.2);
-            border-radius: 2px;
-            padding: 12px;
-            margin-bottom: 10px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.3s;
             position: relative;
         }
 
         .template-item:hover {
-            background: rgba(15, 25, 34, 0.8);
-            border-color: rgba(197, 151, 100, 0.4);
+            background: #e9ecef;
         }
 
         .template-item.active {
-            background: linear-gradient(to right, rgba(197, 151, 100, 0.2), rgba(197, 151, 100, 0.1));
-            color: #c59764;
-            border-color: rgba(197, 151, 100, 0.6);
-            box-shadow: inset 0 0 12px rgba(197, 151, 100, 0.1);
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
         }
 
         .template-delete {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(to bottom, #8b4545, #6b3030);
-            color: #e8e8e8;
-            border: 1px solid rgba(139, 69, 69, 0.4);
-            border-radius: 2px;
-            width: 22px;
-            height: 22px;
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            border: 1px solid #dc3545;
+            border-radius: 3px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             font-size: 0.7em;
             padding: 0;
             margin: 0;
             opacity: 0;
-            transition: all 0.2s;
         }
 
         .template-item:hover .template-delete {
@@ -407,26 +335,24 @@
         }
 
         .template-delete:hover {
-            background: linear-gradient(to bottom, #9b5555, #7b4040);
-            border-color: rgba(139, 69, 69, 0.6);
+            background: #c82333;
+            border-color: #c82333;
         }
 
         .info-box {
-            background: rgba(88, 86, 214, 0.1);
-            border-left: 3px solid rgba(142, 84, 233, 0.5);
-            padding: 14px;
-            margin-bottom: 16px;
-            border-radius: 2px;
-            font-size: 0.88em;
-            line-height: 1.6;
-            color: rgba(232, 232, 232, 0.9);
+            background: #e7f3ff;
+            border-left: 3px solid #007bff;
+            padding: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #333;
         }
 
         .card-count {
-            font-size: 0.88em;
-            color: #c59764;
+            font-size: 0.85em;
+            color: #666;
             margin-top: 8px;
-            opacity: 0.8;
         }
 
         .modal {
@@ -436,8 +362,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.6);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -448,32 +373,28 @@
         }
 
         .modal-content {
-            background: #16213e;
-            border: 1px solid rgba(197, 151, 100, 0.3);
-            padding: 35px;
-            border-radius: 2px;
-            max-width: 750px;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+            max-width: 600px;
             width: 90%;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
         }
 
         .modal h2 {
-            margin-bottom: 24px;
-            color: #c59764;
-            font-family: 'Cinzel', serif;
-            font-size: 1.4em;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(197, 151, 100, 0.3);
-            padding-bottom: 12px;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.3em;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
+            margin-top: 15px;
         }
 
         .modal-buttons button {
@@ -482,30 +403,27 @@
 
         .deck-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-            gap: 12px;
-            margin: 18px 0;
-            max-height: 320px;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+            max-height: 300px;
             overflow-y: auto;
-            border: 1px solid rgba(197, 151, 100, 0.2);
-            border-radius: 2px;
-            padding: 14px;
-            background: rgba(15, 25, 34, 0.4);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fafafa;
         }
 
         .deck-preview-card {
             position: relative;
             aspect-ratio: 2/3;
-            border-radius: 2px;
+            border-radius: 3px;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-            border: 1px solid rgba(197, 151, 100, 0.2);
-            transition: all 0.2s;
+            border: 1px solid #ddd;
         }
 
         .deck-preview-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            border-color: rgba(197, 151, 100, 0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .deck-preview-card img {
@@ -516,19 +434,18 @@
 
         .deck-preview-card .remove-card {
             position: absolute;
-            top: 4px;
-            right: 4px;
-            background: linear-gradient(to bottom, #8b4545, #6b3030);
-            color: #e8e8e8;
-            border: 1px solid rgba(139, 69, 69, 0.4);
-            border-radius: 2px;
-            width: 22px;
-            height: 22px;
+            top: 3px;
+            right: 3px;
+            background: #dc3545;
+            color: white;
+            border: 1px solid #dc3545;
+            border-radius: 3px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             font-size: 0.7em;
             padding: 0;
             opacity: 0;
-            transition: all 0.2s;
         }
 
         .deck-preview-card:hover .remove-card {
@@ -536,48 +453,47 @@
         }
 
         .deck-preview-card .remove-card:hover {
-            background: linear-gradient(to bottom, #9b5555, #7b4040);
+            background: #c82333;
         }
 
         .position-inputs {
-            margin: 18px 0;
+            margin: 12px 0;
         }
 
         .position-input-group {
-            background: rgba(15, 25, 34, 0.4);
-            padding: 14px;
-            border-radius: 2px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(197, 151, 100, 0.2);
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
         }
 
         .position-input-group label {
             font-size: 0.85em;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .position-input-group input {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .empty-state {
             text-align: center;
-            color: rgba(197, 151, 100, 0.5);
-            padding: 70px 25px;
-            font-size: 1.15em;
-            font-style: italic;
+            color: #999;
+            padding: 50px 20px;
+            font-size: 1em;
         }
 
         .draw-mode-toggle {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         .draw-mode-toggle button {
@@ -587,44 +503,36 @@
         }
 
         .draw-mode-toggle button.active {
-            background: linear-gradient(to bottom, #c59764, #a67c52);
-            color: #0f1922;
-            border-color: rgba(197, 151, 100, 0.6);
-            box-shadow: inset 0 2px 8px rgba(197, 151, 100, 0.3);
+            background: #0056b3;
+            border-color: #0056b3;
         }
 
         .shuffle-control {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .screenshot-toggle {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
+            bottom: 15px;
+            right: 15px;
             z-index: 2000;
         }
 
         .screenshot-toggle button {
-            background: linear-gradient(to bottom, #5856d6, #4842a8);
-            color: #e8e8e8;
-            border: 1px solid rgba(88, 86, 214, 0.5);
-            padding: 13px 22px;
+            background: #28a745;
+            color: white;
+            border: 1px solid #28a745;
+            padding: 10px 15px;
             font-size: 0.9em;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            border-radius: 2px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-            transition: all 0.3s;
+            border-radius: 4px;
         }
 
         .screenshot-toggle button:hover {
-            background: linear-gradient(to bottom, #6866e6, #5852b8);
-            box-shadow: 0 6px 20px rgba(88, 86, 214, 0.4);
-            transform: translateY(-2px);
+            background: #218838;
+            border-color: #218838;
         }
 
         /* Screenshot Mode Styles */
@@ -634,9 +542,7 @@
         }
 
         body.screenshot-mode .container {
-            max-width: 100%;
-            border-radius: 0;
-            box-shadow: none;
+            border: none;
         }
 
         body.screenshot-mode header,
@@ -646,19 +552,15 @@
             display: none;
         }
 
-        body.screenshot-mode .main-content {
-            grid-template-columns: 1fr;
-        }
-
         body.screenshot-mode .center-panel {
-            padding: 20px;
+            padding: 10px;
             background: white;
         }
 
         body.screenshot-mode .spread-container {
             min-height: auto;
-            box-shadow: none;
             background: transparent;
+            border: none;
         }
 
         body.screenshot-mode .card-controls {
@@ -666,23 +568,65 @@
         }
 
         body.screenshot-mode .position-label {
-            font-size: 0.7em;
-            padding: 3px 8px;
+            font-size: 0.65em;
+            padding: 2px 6px;
         }
 
         body.screenshot-mode .card-image {
-            width: 120px;
+            width: 80px;
         }
 
-        @media (max-width: 1200px) {
-            .main-content {
-                grid-template-columns: 1fr;
+        /* Mobile optimization */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
             }
 
-            .sidebar, .notes-panel {
-                border-right: none;
-                border-left: none;
-                border-bottom: 1px solid #e2e8f0;
+            header {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+
+            .sidebar, .notes-panel, .center-panel {
+                padding: 10px;
+            }
+
+            .section h2 {
+                font-size: 0.85em;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+
+            .card-image {
+                width: 80px;
+            }
+
+            .position-label {
+                font-size: 0.65em;
+                padding: 2px 6px;
+            }
+
+            .card-controls button {
+                padding: 3px 6px;
+                font-size: 0.7em;
+            }
+
+            .spread-container {
+                min-height: 300px;
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+
+            .deck-preview {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
             }
         }
     </style>
@@ -691,7 +635,6 @@
     <div class="container">
         <header>
             <h1>Card Reader</h1>
-            <p class="subtitle">Professional card reading tool for advanced practitioners</p>
         </header>
 
         <div class="main-content">
