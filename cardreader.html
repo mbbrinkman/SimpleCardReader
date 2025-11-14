@@ -224,6 +224,8 @@
             justify-content: center;
             position: relative;
             min-height: 0;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .card-position.stacked {
@@ -251,6 +253,8 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         .card-wrapper.highlighted {
@@ -260,6 +264,7 @@
         .card-image {
             max-width: 100%;
             max-height: 100%;
+            width: auto;
             height: auto;
             border-radius: 4px;
             border: 2px solid white;
@@ -270,8 +275,8 @@
         }
 
         .card-image.horizontal {
-            width: auto;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         .card-wrapper.highlighted .card-image {
@@ -550,6 +555,46 @@
             padding: 10px;
             border: 1px solid #4a3b5c;
             border-radius: 2px;
+        }
+
+        .spread-builder-free {
+            position: relative;
+            aspect-ratio: 1;
+            max-width: 400px;
+            width: 100%;
+            margin: 15px auto;
+            background: #1a0f2e;
+            border: 1px solid #4a3b5c;
+            border-radius: 2px;
+            cursor: crosshair;
+        }
+
+        .free-mode-card {
+            position: absolute;
+            width: 30px;
+            height: 45px;
+            background: #4a3b5c;
+            border: 2px solid #d4af37;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4af37;
+            font-size: 0.7em;
+            font-weight: 600;
+            cursor: move;
+            transform: translate(-50%, -50%);
+        }
+
+        .free-mode-card.horizontal {
+            background: #3d5c4a;
+            border-color: #5c8a6e;
+            width: 45px;
+            height: 30px;
+        }
+
+        .free-mode-card:hover {
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
         }
 
         .grid-cell {
@@ -1009,16 +1054,28 @@
             <label>Spread Name</label>
             <input type="text" id="spreadName" placeholder="My Custom Spread">
 
-            <div class="info-box">
-                Click grid cells to place cards. Blue = vertical, Green = horizontal. Click again to toggle orientation, or click a third time to remove.
+            <label>Positioning Mode</label>
+            <div class="draw-mode-toggle" style="margin-bottom: 15px;">
+                <button id="gridModeBtn" class="active" onclick="setPositioningMode('grid')">Grid Mode</button>
+                <button id="freeModeBtn" onclick="setPositioningMode('free')">Free Mode</button>
+            </div>
+
+            <div class="info-box" id="gridModeInfo">
+                <strong>Grid Mode:</strong> Click grid cells to place cards. Blue = vertical, Green = horizontal. Click again to toggle orientation, or click a third time to remove.
+            </div>
+
+            <div class="info-box" id="freeModeInfo" style="display: none;">
+                <strong>Free Mode:</strong> Click anywhere in the area to place a card. Cards can be positioned freely using X/Y coordinates. Press R to toggle rotation before placing.
             </div>
 
             <div class="grid-controls">
-                <button class="secondary" onclick="clearSpreadGrid()">Clear Grid</button>
+                <button class="secondary" onclick="clearSpreadGrid()">Clear All</button>
+                <button class="secondary" id="toggleRotationBtn" style="display: none;" onclick="toggleNextRotation()">Rotation: Vertical</button>
             </div>
 
             <div class="spread-builder">
                 <div class="spread-builder-grid" id="spreadBuilderGrid"></div>
+                <div class="spread-builder-free" id="spreadBuilderFree" style="display: none;"></div>
             </div>
 
             <div class="spread-positions-list" id="spreadPositionsList"></div>
@@ -1050,6 +1107,8 @@
         let pendingSpreadPositions = [];
         let screenshotMode = false;
         let db = null;
+        let positioningMode = 'grid'; // 'grid' or 'free'
+        let nextRotation = 0; // For free mode: 0 = vertical, 90 = horizontal
 
         // IndexedDB setup
         function initDB() {
@@ -1422,6 +1481,9 @@
         function openSpreadModal() {
             document.getElementById('spreadName').value = '';
             pendingSpreadPositions = [];
+            positioningMode = 'grid';
+            nextRotation = 0;
+            setPositioningMode('grid');
             renderSpreadBuilderGrid();
             renderSpreadPositionsList();
             document.getElementById('spreadModal').classList.add('active');
@@ -1430,6 +1492,44 @@
         function closeSpreadModal() {
             document.getElementById('spreadModal').classList.remove('active');
             pendingSpreadPositions = [];
+            positioningMode = 'grid';
+            nextRotation = 0;
+        }
+
+        function setPositioningMode(mode) {
+            positioningMode = mode;
+
+            // Update button states
+            document.getElementById('gridModeBtn').classList.toggle('active', mode === 'grid');
+            document.getElementById('freeModeBtn').classList.toggle('active', mode === 'free');
+
+            // Show/hide appropriate UI elements
+            const gridBuilder = document.getElementById('spreadBuilderGrid');
+            const freeBuilder = document.getElementById('spreadBuilderFree');
+            const gridInfo = document.getElementById('gridModeInfo');
+            const freeInfo = document.getElementById('freeModeInfo');
+            const rotationBtn = document.getElementById('toggleRotationBtn');
+
+            if (mode === 'grid') {
+                gridBuilder.style.display = 'grid';
+                freeBuilder.style.display = 'none';
+                gridInfo.style.display = 'block';
+                freeInfo.style.display = 'none';
+                rotationBtn.style.display = 'none';
+            } else {
+                gridBuilder.style.display = 'none';
+                freeBuilder.style.display = 'block';
+                gridInfo.style.display = 'none';
+                freeInfo.style.display = 'block';
+                rotationBtn.style.display = 'inline-block';
+                renderSpreadBuilderFree();
+            }
+        }
+
+        function toggleNextRotation() {
+            nextRotation = nextRotation === 0 ? 90 : 0;
+            const btn = document.getElementById('toggleRotationBtn');
+            btn.textContent = `Rotation: ${nextRotation === 0 ? 'Vertical' : 'Horizontal'}`;
         }
 
         function renderSpreadBuilderGrid() {
@@ -1489,7 +1589,63 @@
 
         function clearSpreadGrid() {
             pendingSpreadPositions = [];
-            renderSpreadBuilderGrid();
+            if (positioningMode === 'grid') {
+                renderSpreadBuilderGrid();
+            } else {
+                renderSpreadBuilderFree();
+            }
+            renderSpreadPositionsList();
+        }
+
+        function renderSpreadBuilderFree() {
+            const freeArea = document.getElementById('spreadBuilderFree');
+
+            // Clear and setup click handler
+            freeArea.innerHTML = '';
+            freeArea.onclick = handleFreeAreaClick;
+
+            // Render existing positions
+            pendingSpreadPositions.forEach((pos, idx) => {
+                if (pos.x !== undefined && pos.y !== undefined) {
+                    const card = document.createElement('div');
+                    card.className = `free-mode-card ${pos.rotation === 90 ? 'horizontal' : ''}`;
+                    card.style.left = `${pos.x * 100}%`;
+                    card.style.top = `${pos.y * 100}%`;
+                    card.textContent = idx + 1;
+                    card.onclick = (e) => {
+                        e.stopPropagation();
+                        removeFreePosition(idx);
+                    };
+                    card.title = `Click to remove. ${pos.name}`;
+                    freeArea.appendChild(card);
+                }
+            });
+        }
+
+        function handleFreeAreaClick(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+
+            // Add new position
+            pendingSpreadPositions.push({
+                x: Math.round(x * 1000) / 1000, // Round to 3 decimal places
+                y: Math.round(y * 1000) / 1000,
+                rotation: nextRotation,
+                name: `Card ${pendingSpreadPositions.length + 1}`
+            });
+
+            renderSpreadBuilderFree();
+            renderSpreadPositionsList();
+        }
+
+        function removeFreePosition(idx) {
+            pendingSpreadPositions.splice(idx, 1);
+            // Renumber remaining positions
+            pendingSpreadPositions.forEach((p, i) => {
+                p.name = `Card ${i + 1}`;
+            });
+            renderSpreadBuilderFree();
             renderSpreadPositionsList();
         }
 
@@ -1501,12 +1657,22 @@
                 return;
             }
 
-            list.innerHTML = pendingSpreadPositions.map((pos, idx) => `
-                <div class="position-item">
-                    <span>${pos.name} (Row ${pos.row + 1}, Col ${pos.col + 1}, ${pos.rotation === 90 ? 'Horizontal' : 'Vertical'})</span>
-                    <button class="danger" onclick="removeSpreadPosition(${idx})">Remove</button>
-                </div>
-            `).join('');
+            list.innerHTML = pendingSpreadPositions.map((pos, idx) => {
+                let posInfo;
+                if (pos.row !== undefined && pos.col !== undefined) {
+                    // Grid mode
+                    posInfo = `Row ${pos.row + 1}, Col ${pos.col + 1}, ${pos.rotation === 90 ? 'Horizontal' : 'Vertical'}`;
+                } else {
+                    // Free mode
+                    posInfo = `X: ${(pos.x * 100).toFixed(1)}%, Y: ${(pos.y * 100).toFixed(1)}%, ${pos.rotation === 90 ? 'Horizontal' : 'Vertical'}`;
+                }
+                return `
+                    <div class="position-item">
+                        <span>${pos.name} (${posInfo})</span>
+                        <button class="danger" onclick="removeSpreadPosition(${idx})">Remove</button>
+                    </div>
+                `;
+            }).join('');
         }
 
         function removeSpreadPosition(idx) {
@@ -1515,7 +1681,11 @@
             pendingSpreadPositions.forEach((p, i) => {
                 p.name = `Card ${i + 1}`;
             });
-            renderSpreadBuilderGrid();
+            if (positioningMode === 'grid') {
+                renderSpreadBuilderGrid();
+            } else {
+                renderSpreadBuilderFree();
+            }
             renderSpreadPositionsList();
         }
 
@@ -1690,6 +1860,59 @@
                 `;
                 return;
             }
+
+            // Check if spread uses free positioning or grid positioning
+            const usesFreePositioning = spread.positions.some(pos => pos.x !== undefined && pos.y !== undefined);
+
+            if (usesFreePositioning) {
+                renderSpreadFree(container, spread);
+            } else {
+                renderSpreadGrid(container, spread);
+            }
+        }
+
+        function renderSpreadFree(container, spread) {
+            // Free positioning mode - use absolute positioning
+            container.style.display = 'block';
+            container.style.position = 'relative';
+
+            let html = '';
+
+            state.drawnCards.forEach((drawn, idx) => {
+                const pos = spread.positions[idx];
+                if (!drawn || !pos) return;
+
+                const highlighted = state.highlightedCards.includes(idx);
+                const currentRotation = (drawn.rotation || 0) % 360;
+                const totalRotation = currentRotation + (drawn.reversed ? 180 : 0);
+                const isHorizontal = (currentRotation === 90 || currentRotation === 270);
+
+                html += `
+                    <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
+                         style="position: absolute; left: ${pos.x * 100}%; top: ${pos.y * 100}%; transform: translate(-50%, -50%);"
+                         onclick="toggleHighlight(${idx}, event)">
+                        <div class="position-label">${pos.name}</div>
+                        <img src="${drawn.card.data}"
+                             alt="${drawn.card.name}"
+                             class="card-image ${isHorizontal ? 'horizontal' : ''}"
+                             style="transform: rotate(${totalRotation}deg); max-width: 120px; max-height: 180px;">
+                        <div class="card-controls">
+                            <button onclick="event.stopPropagation(); rotateCard(${idx}, -1)" title="Rotate">↶</button>
+                            <button onclick="event.stopPropagation(); rotateCard(${idx}, 1)" title="Rotate">↷</button>
+                            <button onclick="event.stopPropagation(); flipCard(${idx})" title="Flip">⇅</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            updateCardList();
+        }
+
+        function renderSpreadGrid(container, spread) {
+            // Grid positioning mode - use CSS grid
+            container.style.display = 'grid';
+            container.style.position = 'relative';
 
             let html = '';
 
