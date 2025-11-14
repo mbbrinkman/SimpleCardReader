@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -65,7 +65,8 @@
 
         .center-panel {
             padding: 30px;
-            background: white;
+            background: #f9fafb;
+            position: relative;
         }
 
         .section {
@@ -119,6 +120,12 @@
             background: #e53e3e;
         }
 
+        button.small {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            width: auto;
+        }
+
         textarea, input, select {
             width: 100%;
             padding: 10px;
@@ -142,63 +149,86 @@
             font-size: 0.9em;
         }
 
+        input[type="file"] {
+            padding: 5px;
+        }
+
         .spread-container {
-            display: grid;
-            gap: 20px;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            margin-top: 20px;
+            position: relative;
+            min-height: 500px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .card-position {
-            background: white;
-            border: 3px solid #cbd5e0;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            cursor: pointer;
+            position: absolute;
+            cursor: move;
+            user-select: none;
+        }
+
+        .card-wrapper {
             position: relative;
+            transition: transform 0.3s;
         }
 
-        .card-position.has-card {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        .card-wrapper.highlighted {
+            filter: drop-shadow(0 0 10px rgba(246, 173, 85, 0.8));
         }
 
-        .card-position.highlighted {
+        .card-image {
+            width: 150px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 3px solid white;
+            background: white;
+            display: block;
+        }
+
+        .card-wrapper.highlighted .card-image {
             border-color: #f6ad55;
-            background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
-            box-shadow: 0 0 15px rgba(246, 173, 85, 0.4);
-        }
-
-        .card-position:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .position-label {
-            font-size: 0.8em;
-            color: #718096;
-            margin-bottom: 8px;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75em;
             font-weight: 600;
+            white-space: nowrap;
+            z-index: 10;
         }
 
-        .card-name {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #2d3748;
-            margin-bottom: 5px;
+        .card-controls {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 10;
         }
 
-        .card-reversed {
-            color: #e53e3e;
-            font-size: 0.8em;
-            font-style: italic;
+        .card-controls button {
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            width: auto;
+            margin: 0;
+        }
+
+        .card-controls button:hover {
+            background: #2d3748;
         }
 
         .note-item {
@@ -259,6 +289,7 @@
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
 
         .template-item:hover {
@@ -270,6 +301,32 @@
             background: #667eea;
             color: white;
             border-color: #667eea;
+        }
+
+        .template-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #fc8181;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 0.7em;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .template-item:hover .template-delete {
+            opacity: 1;
+        }
+
+        .template-delete:hover {
+            background: #f56565;
         }
 
         .info-box {
@@ -309,7 +366,7 @@
             background: white;
             padding: 30px;
             border-radius: 12px;
-            max-width: 600px;
+            max-width: 700px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
@@ -330,26 +387,85 @@
             flex: 1;
         }
 
+        .deck-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .deck-preview-card {
+            position: relative;
+            aspect-ratio: 2/3;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .deck-preview-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .deck-preview-card .remove-card {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #fc8181;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 0.7em;
+            padding: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .deck-preview-card:hover .remove-card {
+            opacity: 1;
+        }
+
         .position-inputs {
-            margin-bottom: 15px;
+            margin: 15px 0;
         }
 
         .position-input-group {
-            display: flex;
-            gap: 10px;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 6px;
             margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .position-input-group label {
+            font-size: 0.8em;
+            margin-bottom: 3px;
         }
 
         .position-input-group input {
-            flex: 1;
-            margin: 0;
+            margin-bottom: 5px;
         }
 
-        .highlight-btn {
-            font-size: 0.8em;
-            padding: 4px 8px;
-            margin-top: 5px;
-            width: auto;
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #a0aec0;
+            padding: 60px 20px;
+            font-size: 1.1em;
         }
 
         @media (max-width: 1200px) {
@@ -369,7 +485,7 @@
     <div class="container">
         <header>
             <h1>🔮 Simple Tarot Reader</h1>
-            <p class="subtitle">Custom spreads, your own deck, your interpretation</p>
+            <p class="subtitle">Import your deck images, create custom spreads, control card orientation</p>
         </header>
 
         <div class="main-content">
@@ -378,9 +494,9 @@
                 <div class="section">
                     <h2>Your Deck</h2>
                     <div class="info-box">
-                        Define your deck as a JSON array of card names. Example: ["The Fool", "The Magician", ...]
+                        Upload your card images. Supports JPG, PNG, GIF, WebP.
                     </div>
-                    <button onclick="openDeckModal()">Manage Deck</button>
+                    <button onclick="openDeckModal()">Import Deck Images</button>
                     <div class="card-count" id="deckCount">No deck loaded</div>
                 </div>
 
@@ -402,7 +518,7 @@
             <div class="center-panel">
                 <h2 style="margin-bottom: 20px; color: #2d3748;">Current Reading</h2>
                 <div class="spread-container" id="spreadContainer">
-                    <div style="text-align: center; color: #a0aec0; padding: 40px;">
+                    <div class="empty-state">
                         Select a spread template and draw cards to begin
                     </div>
                 </div>
@@ -430,16 +546,19 @@
     <!-- Deck Management Modal -->
     <div class="modal" id="deckModal">
         <div class="modal-content">
-            <h2>Manage Your Deck</h2>
+            <h2>Import Deck Images</h2>
+
             <label>Deck Name</label>
             <input type="text" id="deckName" placeholder="My Tarot Deck">
 
-            <label>Cards (JSON Array)</label>
-            <textarea id="deckInput" style="min-height: 300px; font-family: monospace;" placeholder='["The Fool", "The Magician", "The High Priestess", ...]'></textarea>
+            <label>Select Card Images</label>
+            <input type="file" id="deckFileInput" accept="image/*" multiple onchange="handleDeckFiles(event)">
 
             <div class="info-box">
-                Enter a JSON array of card names. Each card will be able to appear upright or reversed during draws.
+                Select all your card images at once. Images will be stored locally in your browser.
             </div>
+
+            <div id="deckPreview" class="deck-preview"></div>
 
             <div class="modal-buttons">
                 <button onclick="saveDeck()">Save Deck</button>
@@ -452,6 +571,7 @@
     <div class="modal" id="spreadModal">
         <div class="modal-content">
             <h2>Create Custom Spread</h2>
+
             <label>Spread Name</label>
             <input type="text" id="spreadName" placeholder="My Custom Spread">
 
@@ -459,6 +579,10 @@
             <input type="number" id="numPositions" min="1" max="20" value="3" onchange="generatePositionInputs()">
 
             <div id="positionInputs" class="position-inputs"></div>
+
+            <div class="info-box">
+                Define each card position with a name, X/Y coordinates (pixels from top-left), and rotation (degrees).
+            </div>
 
             <div class="modal-buttons">
                 <button onclick="saveSpread()">Save Spread</button>
@@ -480,34 +604,33 @@
             notes: []
         };
 
+        let pendingDeckImages = [];
+
         // Default spread templates
         const defaultSpreads = [
             {
                 name: "Three Card Spread",
-                positions: ["Past", "Present", "Future"]
-            },
-            {
-                name: "Celtic Cross",
                 positions: [
-                    "Present Situation",
-                    "Challenge",
-                    "Distant Past",
-                    "Recent Past",
-                    "Best Outcome",
-                    "Near Future",
-                    "Your Approach",
-                    "External Influences",
-                    "Hopes and Fears",
-                    "Final Outcome"
+                    { name: "Past", x: 100, y: 150, rotation: 0 },
+                    { name: "Present", x: 300, y: 150, rotation: 0 },
+                    { name: "Future", x: 500, y: 150, rotation: 0 }
                 ]
             },
             {
                 name: "Single Card",
-                positions: ["Focus"]
+                positions: [
+                    { name: "Focus", x: 250, y: 150, rotation: 0 }
+                ]
             },
             {
-                name: "Five Card Spread",
-                positions: ["You", "Challenge", "Help", "Action", "Outcome"]
+                name: "Five Card Cross",
+                positions: [
+                    { name: "You", x: 300, y: 200, rotation: 0 },
+                    { name: "Challenge", x: 150, y: 200, rotation: 0 },
+                    { name: "Above", x: 300, y: 50, rotation: 0 },
+                    { name: "Below", x: 300, y: 350, rotation: 0 },
+                    { name: "Outcome", x: 450, y: 200, rotation: 0 }
+                ]
             }
         ];
 
@@ -520,6 +643,9 @@
             renderTemplates();
             updateDeckCount();
             renderNotes();
+            if (state.currentSpread !== null) {
+                renderSpread();
+            }
         }
 
         // Local storage
@@ -537,40 +663,74 @@
         // Deck management
         function openDeckModal() {
             document.getElementById('deckName').value = state.deckName || '';
-            document.getElementById('deckInput').value = JSON.stringify(state.deck, null, 2);
+            document.getElementById('deckFileInput').value = '';
+            pendingDeckImages = [...state.deck];
+            renderDeckPreview();
             document.getElementById('deckModal').classList.add('active');
         }
 
         function closeDeckModal() {
             document.getElementById('deckModal').classList.remove('active');
+            pendingDeckImages = [];
+        }
+
+        function handleDeckFiles(event) {
+            const files = Array.from(event.target.files);
+            let processed = 0;
+
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    pendingDeckImages.push({
+                        name: file.name,
+                        data: e.target.result
+                    });
+                    processed++;
+                    if (processed === files.length) {
+                        renderDeckPreview();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderDeckPreview() {
+            const preview = document.getElementById('deckPreview');
+            if (pendingDeckImages.length === 0) {
+                preview.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 20px;">No images loaded</div>';
+                return;
+            }
+
+            preview.innerHTML = pendingDeckImages.map((card, idx) => `
+                <div class="deck-preview-card">
+                    <img src="${card.data}" alt="${card.name}">
+                    <button class="remove-card" onclick="removeCardFromDeck(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeCardFromDeck(idx) {
+            pendingDeckImages.splice(idx, 1);
+            renderDeckPreview();
         }
 
         function saveDeck() {
-            try {
-                const deckName = document.getElementById('deckName').value.trim();
-                const deckInput = document.getElementById('deckInput').value;
-                const deck = JSON.parse(deckInput);
+            const deckName = document.getElementById('deckName').value.trim();
 
-                if (!Array.isArray(deck)) {
-                    alert('Deck must be a JSON array');
-                    return;
-                }
-
-                if (deck.length === 0) {
-                    alert('Deck must contain at least one card');
-                    return;
-                }
-
-                state.deck = deck;
-                state.deckName = deckName || 'My Deck';
-                state.currentDeck = [...deck];
-                saveState();
-                updateDeckCount();
-                closeDeckModal();
-                alert('Deck saved successfully!');
-            } catch (e) {
-                alert('Invalid JSON format. Please check your input.');
+            if (pendingDeckImages.length === 0) {
+                alert('Please add at least one card image');
+                return;
             }
+
+            state.deck = [...pendingDeckImages];
+            state.deckName = deckName || 'My Deck';
+            state.currentDeck = [...pendingDeckImages];
+            saveState();
+            updateDeckCount();
+            closeDeckModal();
+            alert('Deck saved successfully!');
         }
 
         function updateDeckCount() {
@@ -586,6 +746,7 @@
             list.innerHTML = state.spreads.map((spread, idx) => `
                 <div class="template-item ${state.currentSpread === idx ? 'active' : ''}"
                      onclick="selectSpread(${idx})">
+                    <button class="template-delete" onclick="event.stopPropagation(); deleteSpread(${idx})">×</button>
                     <strong>${spread.name}</strong><br>
                     <small>${spread.positions.length} positions</small>
                 </div>
@@ -599,6 +760,22 @@
             saveState();
             renderTemplates();
             renderSpread();
+        }
+
+        function deleteSpread(idx) {
+            if (confirm('Delete this spread template?')) {
+                state.spreads.splice(idx, 1);
+                if (state.currentSpread === idx) {
+                    state.currentSpread = null;
+                    state.drawnCards = [];
+                    state.highlightedCards = [];
+                } else if (state.currentSpread > idx) {
+                    state.currentSpread--;
+                }
+                saveState();
+                renderTemplates();
+                renderSpread();
+            }
         }
 
         function openSpreadModal() {
@@ -615,11 +792,21 @@
         function generatePositionInputs() {
             const num = parseInt(document.getElementById('numPositions').value) || 3;
             const container = document.getElementById('positionInputs');
-            container.innerHTML = '<label>Position Names</label>';
+            container.innerHTML = '';
 
             for (let i = 0; i < num; i++) {
+                const x = 150 + (i * 180);
+                const y = 150;
                 container.innerHTML += `
-                    <input type="text" id="pos${i}" placeholder="Position ${i + 1}" value="Position ${i + 1}">
+                    <div class="position-input-group">
+                        <label>Position ${i + 1}</label>
+                        <input type="text" id="posName${i}" placeholder="Name" value="Position ${i + 1}">
+                        <div class="input-row">
+                            <input type="number" id="posX${i}" placeholder="X" value="${x}">
+                            <input type="number" id="posY${i}" placeholder="Y" value="${y}">
+                            <input type="number" id="posRot${i}" placeholder="Rotation" value="0">
+                        </div>
+                    </div>
                 `;
             }
         }
@@ -635,8 +822,11 @@
             const positions = [];
 
             for (let i = 0; i < num; i++) {
-                const pos = document.getElementById(`pos${i}`).value.trim();
-                positions.push(pos || `Position ${i + 1}`);
+                const posName = document.getElementById(`posName${i}`).value.trim() || `Position ${i + 1}`;
+                const x = parseInt(document.getElementById(`posX${i}`).value) || 0;
+                const y = parseInt(document.getElementById(`posY${i}`).value) || 0;
+                const rotation = parseInt(document.getElementById(`posRot${i}`).value) || 0;
+                positions.push({ name: posName, x, y, rotation });
             }
 
             state.spreads.push({ name, positions });
@@ -649,7 +839,7 @@
         // Card drawing
         function drawCards() {
             if (state.deck.length === 0) {
-                alert('Please load a deck first');
+                alert('Please import a deck first');
                 return;
             }
 
@@ -673,7 +863,11 @@
                 const randomIdx = Math.floor(Math.random() * state.currentDeck.length);
                 const card = state.currentDeck.splice(randomIdx, 1)[0];
                 const reversed = Math.random() < 0.5;
-                state.drawnCards.push({ card, reversed });
+                state.drawnCards.push({
+                    card,
+                    reversed,
+                    rotation: spread.positions[i].rotation
+                });
             }
 
             saveState();
@@ -697,7 +891,8 @@
             }
         }
 
-        function toggleHighlight(idx) {
+        function toggleHighlight(idx, event) {
+            event.stopPropagation();
             const cardIdx = state.highlightedCards.indexOf(idx);
             if (cardIdx > -1) {
                 state.highlightedCards.splice(cardIdx, 1);
@@ -708,11 +903,27 @@
             renderSpread();
         }
 
+        function rotateCard(idx, direction) {
+            if (state.drawnCards[idx]) {
+                state.drawnCards[idx].rotation = (state.drawnCards[idx].rotation + (direction * 90)) % 360;
+                saveState();
+                renderSpread();
+            }
+        }
+
+        function flipCard(idx) {
+            if (state.drawnCards[idx]) {
+                state.drawnCards[idx].reversed = !state.drawnCards[idx].reversed;
+                saveState();
+                renderSpread();
+            }
+        }
+
         function renderSpread() {
             const container = document.getElementById('spreadContainer');
 
             if (state.currentSpread === null) {
-                container.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px;">Select a spread template to begin</div>';
+                container.innerHTML = '<div class="empty-state">Select a spread template to begin</div>';
                 return;
             }
 
@@ -720,7 +931,7 @@
 
             if (state.drawnCards.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: #a0aec0; padding: 40px;">
+                    <div class="empty-state">
                         <strong>${spread.name}</strong><br><br>
                         Click "Draw Cards" to begin your reading
                     </div>
@@ -731,15 +942,23 @@
             container.innerHTML = spread.positions.map((pos, idx) => {
                 const drawn = state.drawnCards[idx];
                 const highlighted = state.highlightedCards.includes(idx);
+                const totalRotation = (drawn.rotation || 0) + (drawn.reversed ? 180 : 0);
 
                 return `
-                    <div class="card-position ${drawn ? 'has-card' : ''} ${highlighted ? 'highlighted' : ''}"
-                         onclick="toggleHighlight(${idx})">
-                        <div class="position-label">${pos}</div>
-                        ${drawn ? `
-                            <div class="card-name">${drawn.card}</div>
-                            ${drawn.reversed ? '<div class="card-reversed">Reversed</div>' : ''}
-                        ` : ''}
+                    <div class="card-position" style="left: ${pos.x}px; top: ${pos.y}px;">
+                        <div class="position-label">${pos.name}</div>
+                        <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
+                             onclick="toggleHighlight(${idx}, event)"
+                             style="transform: rotate(${totalRotation}deg);">
+                            <img src="${drawn.card.data}"
+                                 alt="${drawn.card.name}"
+                                 class="card-image">
+                        </div>
+                        <div class="card-controls">
+                            <button onclick="event.stopPropagation(); rotateCard(${idx}, -1)" title="Rotate Left">↶</button>
+                            <button onclick="event.stopPropagation(); rotateCard(${idx}, 1)" title="Rotate Right">↷</button>
+                            <button onclick="event.stopPropagation(); flipCard(${idx})" title="Flip">⇅</button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -758,14 +977,14 @@
             const includeHighlighted = document.getElementById('includeHighlighted').checked;
             const cards = [];
 
-            if (includeHighlighted && state.highlightedCards.length > 0) {
+            if (includeHighlighted && state.highlightedCards.length > 0 && state.currentSpread !== null) {
                 const spread = state.spreads[state.currentSpread];
                 state.highlightedCards.forEach(idx => {
                     const drawn = state.drawnCards[idx];
-                    const position = spread.positions[idx];
+                    const position = spread.positions[idx].name;
                     cards.push({
                         position,
-                        card: drawn.card,
+                        cardName: drawn.card.name,
                         reversed: drawn.reversed
                     });
                 });
@@ -802,16 +1021,22 @@
             container.innerHTML = state.notes.map((note, idx) => `
                 <div class="note-item">
                     <button class="note-delete" onclick="deleteNote(${idx})">×</button>
-                    <div class="note-text">${note.text}</div>
+                    <div class="note-text">${escapeHtml(note.text)}</div>
                     ${note.cards.length > 0 ? `
                         <div class="note-cards">
                             ${note.cards.map(c =>
-                                `${c.position}: ${c.card}${c.reversed ? ' (R)' : ''}`
+                                `${c.position}: ${c.cardName}${c.reversed ? ' (Reversed)' : ''}`
                             ).join(' • ')}
                         </div>
                     ` : ''}
                 </div>
             `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Initialize on load
