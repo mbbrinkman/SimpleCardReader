@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Card Reader</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,37 +14,58 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Crimson Pro', 'Georgia', serif;
+            background: #1a1a2e;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(88, 86, 214, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(142, 84, 233, 0.05) 0%, transparent 50%);
             min-height: 100vh;
-            padding: 20px;
-            color: #333;
+            padding: 30px;
+            color: #e8e8e8;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: #16213e;
+            border: 1px solid rgba(197, 151, 100, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             overflow: hidden;
         }
 
         header {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            color: white;
-            padding: 20px 30px;
-            border-bottom: 3px solid #667eea;
+            background: linear-gradient(to bottom, #0f1922, #16213e);
+            color: #c59764;
+            padding: 30px 40px;
+            border-bottom: 2px solid rgba(197, 151, 100, 0.3);
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c59764, transparent);
         }
 
         h1 {
-            font-size: 2em;
-            margin-bottom: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .subtitle {
-            opacity: 0.8;
-            font-size: 0.9em;
+            opacity: 0.7;
+            font-size: 0.95em;
+            letter-spacing: 1px;
+            font-style: italic;
         }
 
         .main-content {
@@ -53,71 +76,88 @@
         }
 
         .sidebar, .notes-panel {
-            background: #f7fafc;
-            padding: 20px;
-            border-right: 1px solid #e2e8f0;
+            background: #0f1922;
+            padding: 25px;
+            border-right: 1px solid rgba(197, 151, 100, 0.15);
         }
 
         .notes-panel {
             border-right: none;
-            border-left: 1px solid #e2e8f0;
+            border-left: 1px solid rgba(197, 151, 100, 0.15);
         }
 
         .center-panel {
-            padding: 30px;
-            background: #f9fafb;
+            padding: 35px;
+            background: #1a1a2e;
             position: relative;
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .section h2 {
-            font-size: 1.1em;
-            margin-bottom: 12px;
-            color: #2d3748;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            margin-bottom: 15px;
+            color: #c59764;
+            border-bottom: 1px solid rgba(197, 151, 100, 0.3);
+            padding-bottom: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
         button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
+            background: linear-gradient(to bottom, #c59764, #a67c52);
+            color: #0f1922;
+            border: 1px solid rgba(197, 151, 100, 0.4);
+            padding: 11px 18px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.9em;
-            transition: all 0.2s;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         button:hover {
-            background: #5a67d8;
+            background: linear-gradient(to bottom, #d4a574, #b88c62);
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(197, 151, 100, 0.3);
+            border-color: rgba(197, 151, 100, 0.6);
         }
 
         button:active {
             transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         button.secondary {
-            background: #718096;
+            background: linear-gradient(to bottom, #2d3748, #1a202c);
+            color: #c59764;
+            border-color: rgba(197, 151, 100, 0.3);
         }
 
         button.secondary:hover {
-            background: #4a5568;
+            background: linear-gradient(to bottom, #3d4758, #2a303c);
+            border-color: rgba(197, 151, 100, 0.5);
         }
 
         button.danger {
-            background: #f56565;
+            background: linear-gradient(to bottom, #8b4545, #6b3030);
+            color: #e8e8e8;
+            border-color: rgba(139, 69, 69, 0.4);
         }
 
         button.danger:hover {
-            background: #e53e3e;
+            background: linear-gradient(to bottom, #9b5555, #7b4040);
+            border-color: rgba(139, 69, 69, 0.6);
         }
 
         button.small {
@@ -128,44 +168,62 @@
 
         textarea, input, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 0.9em;
-            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid rgba(197, 151, 100, 0.3);
+            border-radius: 2px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            background: rgba(15, 25, 34, 0.6);
+            color: #e8e8e8;
+            transition: all 0.3s;
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: rgba(197, 151, 100, 0.6);
+            background: rgba(15, 25, 34, 0.8);
+            box-shadow: 0 0 0 3px rgba(197, 151, 100, 0.1);
         }
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 110px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #4a5568;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #c59764;
             font-size: 0.9em;
+            letter-spacing: 0.5px;
         }
 
         input[type="file"] {
-            padding: 5px;
+            padding: 8px;
+            cursor: pointer;
         }
 
         input[type="number"].inline {
-            width: 60px;
+            width: 70px;
             display: inline-block;
-            padding: 5px;
-            margin: 0 5px;
+            padding: 8px;
+            margin: 0 8px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #c59764;
         }
 
         .spread-container {
             position: relative;
             min-height: 500px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background: rgba(15, 25, 34, 0.4);
+            border: 1px solid rgba(197, 151, 100, 0.15);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .card-position {
@@ -194,94 +252,109 @@
         }
 
         .card-wrapper.highlighted .card-image {
-            border-color: #f6ad55;
+            border-color: #c59764;
+            box-shadow: 0 0 20px rgba(197, 151, 100, 0.6), 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .position-label {
             position: absolute;
-            top: -25px;
+            top: -28px;
             left: 50%;
             transform: translateX(-50%);
-            background: #2d3748;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.75em;
+            background: linear-gradient(to bottom, #0f1922, #000);
+            color: #c59764;
+            padding: 5px 14px;
+            border: 1px solid rgba(197, 151, 100, 0.3);
+            border-radius: 2px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
             font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             white-space: nowrap;
             z-index: 10;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
         }
 
         .card-controls {
             position: absolute;
-            bottom: -35px;
+            bottom: -38px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 5px;
+            gap: 6px;
             z-index: 10;
         }
 
         .card-controls button {
-            background: #4a5568;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            background: linear-gradient(to bottom, #2d3748, #1a202c);
+            color: #c59764;
+            border: 1px solid rgba(197, 151, 100, 0.3);
+            padding: 6px 11px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.75em;
+            font-family: 'Crimson Pro', serif;
             width: auto;
             margin: 0;
+            transition: all 0.2s;
         }
 
         .card-controls button:hover {
-            background: #2d3748;
+            background: linear-gradient(to bottom, #3d4758, #2a303c);
+            border-color: rgba(197, 151, 100, 0.5);
         }
 
         .note-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
+            background: rgba(15, 25, 34, 0.6);
+            border: 1px solid rgba(197, 151, 100, 0.2);
+            border-radius: 2px;
+            padding: 14px;
+            margin-bottom: 12px;
             position: relative;
+            transition: all 0.3s;
         }
 
         .note-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: rgba(15, 25, 34, 0.8);
+            border-color: rgba(197, 151, 100, 0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         .note-text {
-            font-size: 0.9em;
-            line-height: 1.5;
-            margin-bottom: 8px;
-            color: #2d3748;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #e8e8e8;
         }
 
         .note-cards {
-            font-size: 0.75em;
-            color: #718096;
+            font-size: 0.8em;
+            color: #c59764;
             font-style: italic;
+            opacity: 0.8;
         }
 
         .note-delete {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #fc8181;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(to bottom, #8b4545, #6b3030);
+            color: #e8e8e8;
+            border: 1px solid rgba(139, 69, 69, 0.4);
+            border-radius: 2px;
+            width: 26px;
+            height: 26px;
             cursor: pointer;
-            font-size: 0.8em;
+            font-size: 0.9em;
             padding: 0;
             margin: 0;
+            transition: all 0.2s;
         }
 
         .note-delete:hover {
-            background: #f56565;
+            background: linear-gradient(to bottom, #9b5555, #7b4040);
+            border-color: rgba(139, 69, 69, 0.6);
         }
 
         .template-list {
@@ -289,43 +362,44 @@
         }
 
         .template-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 8px;
+            background: rgba(15, 25, 34, 0.6);
+            border: 1px solid rgba(197, 151, 100, 0.2);
+            border-radius: 2px;
+            padding: 12px;
+            margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             position: relative;
         }
 
         .template-item:hover {
-            background: #edf2f7;
-            border-color: #667eea;
+            background: rgba(15, 25, 34, 0.8);
+            border-color: rgba(197, 151, 100, 0.4);
         }
 
         .template-item.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+            background: linear-gradient(to right, rgba(197, 151, 100, 0.2), rgba(197, 151, 100, 0.1));
+            color: #c59764;
+            border-color: rgba(197, 151, 100, 0.6);
+            box-shadow: inset 0 0 12px rgba(197, 151, 100, 0.1);
         }
 
         .template-delete {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #fc8181;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(to bottom, #8b4545, #6b3030);
+            color: #e8e8e8;
+            border: 1px solid rgba(139, 69, 69, 0.4);
+            border-radius: 2px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
             font-size: 0.7em;
             padding: 0;
             margin: 0;
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
 
         .template-item:hover .template-delete {
@@ -333,23 +407,26 @@
         }
 
         .template-delete:hover {
-            background: #f56565;
+            background: linear-gradient(to bottom, #9b5555, #7b4040);
+            border-color: rgba(139, 69, 69, 0.6);
         }
 
         .info-box {
-            background: #bee3f8;
-            border-left: 4px solid #3182ce;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            line-height: 1.5;
+            background: rgba(88, 86, 214, 0.1);
+            border-left: 3px solid rgba(142, 84, 233, 0.5);
+            padding: 14px;
+            margin-bottom: 16px;
+            border-radius: 2px;
+            font-size: 0.88em;
+            line-height: 1.6;
+            color: rgba(232, 232, 232, 0.9);
         }
 
         .card-count {
-            font-size: 0.85em;
-            color: #718096;
-            margin-top: 5px;
+            font-size: 0.88em;
+            color: #c59764;
+            margin-top: 8px;
+            opacity: 0.8;
         }
 
         .modal {
@@ -359,7 +436,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -370,18 +448,26 @@
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 700px;
+            background: #16213e;
+            border: 1px solid rgba(197, 151, 100, 0.3);
+            padding: 35px;
+            border-radius: 2px;
+            max-width: 750px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
         }
 
         .modal h2 {
-            margin-bottom: 20px;
-            color: #2d3748;
+            margin-bottom: 24px;
+            color: #c59764;
+            font-family: 'Cinzel', serif;
+            font-size: 1.4em;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(197, 151, 100, 0.3);
+            padding-bottom: 12px;
         }
 
         .modal-buttons {
@@ -396,22 +482,30 @@
 
         .deck-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-            max-height: 300px;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 12px;
+            margin: 18px 0;
+            max-height: 320px;
             overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 10px;
+            border: 1px solid rgba(197, 151, 100, 0.2);
+            border-radius: 2px;
+            padding: 14px;
+            background: rgba(15, 25, 34, 0.4);
         }
 
         .deck-preview-card {
             position: relative;
             aspect-ratio: 2/3;
-            border-radius: 4px;
+            border-radius: 2px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            border: 1px solid rgba(197, 151, 100, 0.2);
+            transition: all 0.2s;
+        }
+
+        .deck-preview-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border-color: rgba(197, 151, 100, 0.4);
         }
 
         .deck-preview-card img {
@@ -422,57 +516,62 @@
 
         .deck-preview-card .remove-card {
             position: absolute;
-            top: 2px;
-            right: 2px;
-            background: #fc8181;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            top: 4px;
+            right: 4px;
+            background: linear-gradient(to bottom, #8b4545, #6b3030);
+            color: #e8e8e8;
+            border: 1px solid rgba(139, 69, 69, 0.4);
+            border-radius: 2px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
             font-size: 0.7em;
             padding: 0;
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
 
         .deck-preview-card:hover .remove-card {
             opacity: 1;
         }
 
+        .deck-preview-card .remove-card:hover {
+            background: linear-gradient(to bottom, #9b5555, #7b4040);
+        }
+
         .position-inputs {
-            margin: 15px 0;
+            margin: 18px 0;
         }
 
         .position-input-group {
-            background: #f7fafc;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            border: 1px solid #e2e8f0;
+            background: rgba(15, 25, 34, 0.4);
+            padding: 14px;
+            border-radius: 2px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(197, 151, 100, 0.2);
         }
 
         .position-input-group label {
-            font-size: 0.8em;
-            margin-bottom: 3px;
+            font-size: 0.85em;
+            margin-bottom: 6px;
         }
 
         .position-input-group input {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
         .empty-state {
             text-align: center;
-            color: #a0aec0;
-            padding: 60px 20px;
-            font-size: 1.1em;
+            color: rgba(197, 151, 100, 0.5);
+            padding: 70px 25px;
+            font-size: 1.15em;
+            font-style: italic;
         }
 
         .draw-mode-toggle {
@@ -488,33 +587,44 @@
         }
 
         .draw-mode-toggle button.active {
-            background: #48bb78;
+            background: linear-gradient(to bottom, #c59764, #a67c52);
+            color: #0f1922;
+            border-color: rgba(197, 151, 100, 0.6);
+            box-shadow: inset 0 2px 8px rgba(197, 151, 100, 0.3);
         }
 
         .shuffle-control {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
         .screenshot-toggle {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 25px;
+            right: 25px;
             z-index: 2000;
         }
 
         .screenshot-toggle button {
-            background: #48bb78;
-            padding: 12px 20px;
+            background: linear-gradient(to bottom, #5856d6, #4842a8);
+            color: #e8e8e8;
+            border: 1px solid rgba(88, 86, 214, 0.5);
+            padding: 13px 22px;
             font-size: 0.9em;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-radius: 2px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            transition: all 0.3s;
         }
 
         .screenshot-toggle button:hover {
-            background: #38a169;
+            background: linear-gradient(to bottom, #6866e6, #5852b8);
+            box-shadow: 0 6px 20px rgba(88, 86, 214, 0.4);
+            transform: translateY(-2px);
         }
 
         /* Screenshot Mode Styles */
@@ -580,8 +690,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔮 Simple Card Reader</h1>
-            <p class="subtitle">Import your deck images, create custom spreads, control card orientation</p>
+            <h1>Card Reader</h1>
+            <p class="subtitle">Professional card reading tool for advanced practitioners</p>
         </header>
 
         <div class="main-content">
@@ -660,7 +770,7 @@
 
     <!-- Screenshot Mode Toggle -->
     <div class="screenshot-toggle">
-        <button onclick="toggleScreenshotMode()">📸 Screenshot Mode</button>
+        <button onclick="toggleScreenshotMode()">Screenshot Mode</button>
     </div>
 
     <!-- Deck Management Modal -->
