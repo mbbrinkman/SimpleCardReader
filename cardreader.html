@@ -56,7 +56,7 @@
         }
 
         .center-panel {
-            padding: 15px;
+            padding: 10px;
             background: #2a1f3d;
             position: relative;
         }
@@ -207,13 +207,15 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 10px;
-            padding: 15px;
+            gap: 8px;
+            padding: 10px;
             background: #1a0f2e;
             border: 1px solid #4a3b5c;
             aspect-ratio: 1;
             max-width: 100%;
+            width: 100%;
             margin: 0 auto;
+            min-height: 400px;
         }
 
         .card-position {
@@ -665,17 +667,22 @@
 
         body.screenshot-mode .container {
             border: none;
+            background: white;
         }
 
         body.screenshot-mode header,
         body.screenshot-mode .sidebar,
-        body.screenshot-mode .notes-panel,
-        body.screenshot-mode .screenshot-toggle {
+        body.screenshot-mode .notes-panel {
             display: none;
         }
 
+        body.screenshot-mode .screenshot-toggle {
+            bottom: 10px;
+            right: 10px;
+        }
+
         body.screenshot-mode .center-panel {
-            padding: 10px;
+            padding: 5px;
             background: white;
         }
 
@@ -683,6 +690,8 @@
             min-height: auto;
             background: transparent;
             border: none;
+            gap: 4px;
+            padding: 5px;
         }
 
         body.screenshot-mode .card-controls {
@@ -694,8 +703,22 @@
             padding: 2px 6px;
         }
 
-        body.screenshot-mode .card-image {
-            width: 80px;
+        .screenshot-mode-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            z-index: 3000;
+            text-align: center;
+        }
+
+        body:not(.screenshot-mode) .screenshot-mode-indicator {
+            display: none;
         }
 
         /* Mobile optimization */
@@ -712,8 +735,12 @@
                 font-size: 1.2em;
             }
 
-            .sidebar, .notes-panel, .center-panel {
+            .sidebar, .notes-panel {
                 padding: 10px;
+            }
+
+            .center-panel {
+                padding: 5px;
             }
 
             .section h2 {
@@ -726,8 +753,9 @@
             }
 
             .spread-container {
-                gap: 6px;
-                padding: 8px;
+                gap: 5px;
+                padding: 5px;
+                min-height: 300px;
             }
 
             .position-label {
@@ -756,6 +784,11 @@
 
             .grid-cell {
                 font-size: 0.7em;
+            }
+
+            body.screenshot-mode .spread-container {
+                gap: 3px;
+                padding: 3px;
             }
         }
     </style>
@@ -853,7 +886,12 @@
 
     <!-- Screenshot Mode Toggle -->
     <div class="screenshot-toggle">
-        <button onclick="toggleScreenshotMode()">Screenshot Mode</button>
+        <button id="screenshotBtn" onclick="toggleScreenshotMode()">Screenshot Mode</button>
+    </div>
+
+    <!-- Screenshot Mode Indicator -->
+    <div class="screenshot-mode-indicator">
+        Click "Exit Screenshot" or press ESC to return
     </div>
 
     <!-- Deck Management Modal -->
@@ -1134,10 +1172,13 @@
         // Screenshot mode toggle
         function toggleScreenshotMode() {
             screenshotMode = !screenshotMode;
+            const btn = document.getElementById('screenshotBtn');
             if (screenshotMode) {
                 document.body.classList.add('screenshot-mode');
+                btn.textContent = 'Exit Screenshot';
             } else {
                 document.body.classList.remove('screenshot-mode');
+                btn.textContent = 'Screenshot Mode';
             }
         }
 
