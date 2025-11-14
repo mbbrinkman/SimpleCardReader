@@ -259,21 +259,14 @@
         }
 
         .card-image {
-            max-width: 150px;
-            max-height: 225px;
-            width: auto;
-            height: auto;
+            width: 100%;
+            height: 100%;
             border-radius: 4px;
             border: 2px solid white;
             background: white;
             display: block;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             object-fit: contain;
-        }
-
-        .card-image.horizontal {
-            max-width: 225px;
-            max-height: 150px;
         }
 
         .card-wrapper.highlighted .card-image {
@@ -1084,6 +1077,131 @@
         let positioningMode = 'grid'; // 'grid' or 'free'
         let nextRotation = 0; // For free mode: 0 = vertical, 90 = horizontal
 
+        // Card sizing parameters
+        const CARD_ASPECT_RATIO = 2 / 3; // height / width for vertical cards
+        const GRID_SIZE = 5; // 5x5 grid
+        const MIN_CARD_SPACING = 8; // Minimum spacing between cards in pixels
+
+        // Calculate optimal card dimensions based on container size and spread layout
+        function calculateCardDimensions() {
+            const container = document.getElementById('spreadContainer');
+            if (!container || state.currentSpread === null) {
+                return { width: 150, height: 225 }; // Default fallback
+            }
+
+            const spread = state.spreads[state.currentSpread];
+            const containerRect = container.getBoundingClientRect();
+            const containerWidth = containerRect.width;
+            const containerHeight = containerRect.height;
+
+            // Check if spread uses free positioning
+            const usesFreePositioning = spread.positions.some(pos => pos.x !== undefined && pos.y !== undefined);
+
+            if (usesFreePositioning) {
+                return calculateFreePositionCardSize(spread, containerWidth, containerHeight);
+            } else {
+                return calculateGridCardSize(spread, containerWidth, containerHeight);
+            }
+        }
+
+        // Calculate card size for grid-based spreads
+        function calculateGridCardSize(spread, containerWidth, containerHeight) {
+            // Get the actual gap value from the container
+            const gap = screenshotMode ? 4 : 8;
+
+            // Calculate available space per grid cell
+            const availableWidth = (containerWidth - (gap * (GRID_SIZE - 1))) / GRID_SIZE;
+            const availableHeight = (containerHeight - (gap * (GRID_SIZE - 1))) / GRID_SIZE;
+
+            // Find the maximum extent of cards in the grid
+            let minRow = GRID_SIZE, maxRow = -1;
+            let minCol = GRID_SIZE, maxCol = -1;
+
+            spread.positions.forEach(pos => {
+                if (pos.row !== undefined && pos.col !== undefined) {
+                    minRow = Math.min(minRow, pos.row);
+                    maxRow = Math.max(maxRow, pos.row);
+                    minCol = Math.min(minCol, pos.col);
+                    maxCol = Math.max(maxCol, pos.col);
+                }
+            });
+
+            // Calculate how many cells are used
+            const usedRows = maxRow - minRow + 1;
+            const usedCols = maxCol - minCol + 1;
+
+            // Calculate effective available space
+            const effectiveWidth = (containerWidth - (gap * (usedCols - 1))) / usedCols;
+            const effectiveHeight = (containerHeight - (gap * (usedRows - 1))) / usedRows;
+
+            // For vertical cards: height = width * (1 / CARD_ASPECT_RATIO)
+            // For horizontal cards: width = height * (1 / CARD_ASPECT_RATIO)
+
+            // Calculate max card dimensions that fit in cells
+            // Try fitting based on width constraint
+            let cardWidth = effectiveWidth * 0.85; // Use 85% to leave some breathing room
+            let cardHeight = cardWidth / CARD_ASPECT_RATIO;
+
+            // Check if height exceeds available space
+            if (cardHeight > effectiveHeight * 0.85) {
+                // Constrain by height instead
+                cardHeight = effectiveHeight * 0.85;
+                cardWidth = cardHeight * CARD_ASPECT_RATIO;
+            }
+
+            // Ensure minimum reasonable size
+            cardWidth = Math.max(50, cardWidth);
+            cardHeight = Math.max(75, cardHeight);
+
+            // Ensure maximum reasonable size to prevent cards from being too large
+            cardWidth = Math.min(250, cardWidth);
+            cardHeight = Math.min(375, cardHeight);
+
+            return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
+        }
+
+        // Calculate card size for free-positioned spreads
+        function calculateFreePositionCardSize(spread, containerWidth, containerHeight) {
+            // Find minimum distance between cards
+            let minDistance = Infinity;
+
+            for (let i = 0; i < spread.positions.length; i++) {
+                for (let j = i + 1; j < spread.positions.length; j++) {
+                    const pos1 = spread.positions[i];
+                    const pos2 = spread.positions[j];
+
+                    if (pos1.x !== undefined && pos2.x !== undefined) {
+                        const dx = (pos1.x - pos2.x) * containerWidth;
+                        const dy = (pos1.y - pos2.y) * containerHeight;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        minDistance = Math.min(minDistance, distance);
+                    }
+                }
+            }
+
+            // Base size on container dimensions
+            let baseSize = Math.min(containerWidth, containerHeight) * 0.25;
+
+            // If we have multiple cards, constrain by minimum distance
+            if (spread.positions.length > 1 && minDistance !== Infinity) {
+                baseSize = Math.min(baseSize, minDistance * 0.6);
+            }
+
+            // Calculate card dimensions maintaining aspect ratio
+            let cardWidth = baseSize * 0.6; // Narrower for card proportions
+            let cardHeight = cardWidth / CARD_ASPECT_RATIO;
+
+            // Ensure cards don't exceed container bounds
+            cardWidth = Math.min(cardWidth, containerWidth * 0.3);
+            cardHeight = Math.min(cardHeight, containerHeight * 0.4);
+
+            // Ensure minimum and maximum sizes
+            cardWidth = Math.max(60, Math.min(200, cardWidth));
+            cardHeight = Math.max(90, Math.min(300, cardHeight));
+
+            return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
+        }
+
         // IndexedDB setup
         function initDB() {
             return new Promise((resolve, reject) => {
@@ -1209,6 +1327,18 @@
             }
         ];
 
+        // Handle window resize to recalculate card sizes
+        let resizeTimeout;
+        function handleResize() {
+            // Debounce resize events
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (state.currentSpread !== null && state.drawnCards.length > 0) {
+                    renderSpread();
+                }
+            }, 150);
+        }
+
         // Initialize app
         async function init() {
             await initDB();
@@ -1225,6 +1355,9 @@
             if (state.currentSpread !== null) {
                 renderSpread();
             }
+
+            // Add window resize listener
+            window.addEventListener('resize', handleResize);
         }
 
         // IndexedDB storage
@@ -1295,6 +1428,12 @@
             } else {
                 document.body.classList.remove('screenshot-mode');
                 btn.textContent = 'Screenshot Mode';
+            }
+
+            // Re-render spread to adjust card sizes for screenshot mode
+            if (state.currentSpread !== null && state.drawnCards.length > 0) {
+                // Small delay to allow CSS changes to take effect
+                setTimeout(() => renderSpread(), 50);
             }
         }
 
@@ -1850,6 +1989,9 @@
             container.style.display = 'block';
             container.style.position = 'relative';
 
+            // Calculate optimal card dimensions
+            const cardDims = calculateCardDimensions();
+
             let html = '';
 
             state.drawnCards.forEach((drawn, idx) => {
@@ -1861,6 +2003,10 @@
                 const totalRotation = currentRotation + (drawn.reversed ? 180 : 0);
                 const isHorizontal = (currentRotation === 90 || currentRotation === 270);
 
+                // Swap width and height for horizontal cards
+                const width = isHorizontal ? cardDims.height : cardDims.width;
+                const height = isHorizontal ? cardDims.width : cardDims.height;
+
                 html += `
                     <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
                          style="position: absolute; left: ${pos.x * 100}%; top: ${pos.y * 100}%; transform: translate(-50%, -50%);"
@@ -1868,8 +2014,8 @@
                         <div class="position-label">${pos.name}</div>
                         <img src="${drawn.card.data}"
                              alt="${drawn.card.name}"
-                             class="card-image ${isHorizontal ? 'horizontal' : ''}"
-                             style="transform: rotate(${totalRotation}deg); max-width: 120px; max-height: 180px;">
+                             class="card-image"
+                             style="transform: rotate(${totalRotation}deg); width: ${width}px; height: ${height}px;">
                         <div class="card-controls">
                             <button onclick="event.stopPropagation(); rotateCard(${idx}, -1)" title="Rotate">↶</button>
                             <button onclick="event.stopPropagation(); rotateCard(${idx}, 1)" title="Rotate">↷</button>
@@ -1887,6 +2033,9 @@
             // Grid positioning mode - use CSS grid
             container.style.display = 'grid';
             container.style.position = 'relative';
+
+            // Calculate optimal card dimensions
+            const cardDims = calculateCardDimensions();
 
             let html = '';
 
@@ -1935,14 +2084,18 @@
                         const totalRotation = currentRotation + (drawn.reversed ? 180 : 0);
                         const isHorizontal = (currentRotation === 90 || currentRotation === 270);
 
+                        // Swap width and height for horizontal cards
+                        const width = isHorizontal ? cardDims.height : cardDims.width;
+                        const height = isHorizontal ? cardDims.width : cardDims.height;
+
                         html += `
                             <div class="card-wrapper ${highlighted ? 'highlighted' : ''}"
                                  onclick="toggleHighlight(${posIndex}, event)">
                                 <div class="position-label">${pos.name}</div>
                                 <img src="${drawn.card.data}"
                                      alt="${drawn.card.name}"
-                                     class="card-image ${isHorizontal ? 'horizontal' : ''}"
-                                     style="transform: rotate(${totalRotation}deg);">
+                                     class="card-image"
+                                     style="transform: rotate(${totalRotation}deg); width: ${width}px; height: ${height}px;">
                                 <div class="card-controls">
                                     <button onclick="event.stopPropagation(); rotateCard(${posIndex}, -1)" title="Rotate">↶</button>
                                     <button onclick="event.stopPropagation(); rotateCard(${posIndex}, 1)" title="Rotate">↷</button>
