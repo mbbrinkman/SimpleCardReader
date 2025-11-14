@@ -17,21 +17,22 @@ No installation required - just open in your browser and start reading!
 - Easy deck management with visual preview
 
 ### 📐 Custom Spread Templates
-- 10 pre-configured spread templates included:
+- 11 pre-configured spread templates included:
   - Single Card
   - Three Card Row
+  - Three Card Column
   - Five Card Cross
   - Seven Card Horseshoe
   - Four Corners
-  - Six Card Circle
   - Pyramid (Six Cards)
   - Two Card Comparison
   - Nine Card Grid
   - Celtic Cross (Ten Cards)
 - Create unlimited custom spreads with:
+  - Visual 5×5 grid builder interface
+  - Click cells to place cards (vertical or horizontal)
+  - Automatic card positioning and sizing
   - Custom position names
-  - Precise X/Y coordinate placement
-  - Initial rotation angles
 - Delete custom spreads (default templates are protected)
 
 ### 🔀 Flexible Shuffling
@@ -69,8 +70,9 @@ Each drawn card has three control buttons:
 - Toggle on/off with floating button
 
 ### 💾 Persistent Storage
-- All data saved to browser localStorage
+- All data saved to browser IndexedDB
 - Decks, spreads, readings, and notes persist across sessions
+- Large storage capacity for high-resolution card images
 - No server required, works completely offline
 
 ## Getting Started
@@ -123,12 +125,12 @@ Each drawn card has three control buttons:
 1. Click any spread template from the **"Spread Templates"** list
 2. Or click **"Create Custom Spread"** to design your own:
    - Enter a spread name
-   - Set number of positions
-   - For each position, specify:
-     - Name (e.g., "Past", "Present", "Future")
-     - X coordinate (pixels from left)
-     - Y coordinate (pixels from top)
-     - Initial rotation (degrees)
+   - Click grid cells to place cards:
+     - **First click**: Place vertical card (purple)
+     - **Second click**: Toggle to horizontal card (green)
+     - **Third click**: Remove card position
+   - Cards are automatically numbered (Card 1, Card 2, etc.)
+   - Click "Save Spread" when finished
 
 #### 4. Select Draw Mode
 - **Draw All**: Draws all cards at once (default)
@@ -166,20 +168,21 @@ Each drawn card has three control buttons:
 - Works in all modern browsers (Chrome, Firefox, Safari, Edge)
 - Requires JavaScript enabled
 - Uses HTML5 FileReader API for image import
-- Uses localStorage for data persistence
+- Uses IndexedDB for data persistence
 
 ### Data Storage
-All data is stored in browser localStorage under the key `cardReaderState`:
+All data is stored in browser IndexedDB in the `CardReaderDB` database:
 - Deck images (base64 encoded)
 - Spread templates
 - Current reading state
 - Highlights
 - Notes
 
-### File Size Considerations
-- Browser localStorage typically limited to 5-10MB
-- Large decks (78+ high-resolution images) may approach limits
-- Consider reducing image file sizes if storage issues occur
+**Storage Capacity:**
+- IndexedDB can store hundreds of MB to several GB depending on browser
+- Significantly larger capacity than localStorage (5-10MB limit)
+- Perfect for storing multiple high-resolution decks
+- Storage quota varies by browser and available disk space
 
 ### Privacy
 - **100% local** - no data sent to any server
@@ -189,9 +192,10 @@ All data is stored in browser localStorage under the key `cardReaderState`:
 ## Tips & Best Practices
 
 ### Creating Custom Spreads
-- The spread canvas is approximately 700px wide × 500px tall
-- Leave at least 75px of space around cards for labels and controls
-- Use rotation values between -45° and 45° for subtle angles
+- Use the 5×5 grid builder for easy spread design
+- Cards automatically size to fit grid cells
+- Place vertical cards (purple) or horizontal cards (green)
+- Grid positions ensure consistent spacing
 - Test your spread layout before saving
 
 ### Image Recommendations
@@ -226,23 +230,28 @@ All data is stored in browser localStorage under the key `cardReaderState`:
 ## Troubleshooting
 
 ### Deck not saving
-- Check browser localStorage isn't full
+- Check browser IndexedDB storage quota isn't exceeded
 - Try using smaller/compressed images
-- Clear old data from localStorage
+- Clear browser data to free up space
+- Check browser console for IndexedDB errors
 
 ### Cards overlapping
-- Adjust X/Y coordinates in custom spread
-- Ensure positions are at least 180px apart
+- Cards automatically size to fit grid cells
+- Ensure sufficient spacing in custom spreads
+- Use different grid positions for each card
 
 ### Images not loading
 - Verify image file format is supported (JPG, PNG, GIF, WebP)
 - Check browser console for errors
 - Try re-importing deck
+- Ensure images aren't corrupted
 
 ### State not persisting
-- Ensure cookies/localStorage not disabled
-- Check browser privacy settings
+- Ensure IndexedDB not disabled in browser settings
+- Check browser privacy/incognito mode isn't clearing data
+- Verify browser supports IndexedDB
 - Try a different browser
+- Check browser console for database errors
 
 ## License
 
