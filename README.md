@@ -31,7 +31,9 @@ A lightweight, single-file card reading application that works entirely in your 
 ### 🔀 Flexible Shuffling
 - **Manual Shuffle**: Shuffle deck 1-10 times on demand
 - **Auto-Shuffle**: Automatically shuffle before each draw
-- Configurable shuffle count
+- **Orientation Shuffle**: Each shuffle randomizes card orientations (0° or 180°)
+- **No Reversals Mode**: Toggle to disable reversed cards (all cards upright)
+- Configurable shuffle count (1-10)
 - Automatic shuffle on deck import
 
 ### 🎯 Two Drawing Modes
@@ -51,6 +53,14 @@ Each drawn card has three control buttons:
 - **Reference highlighted cards** in notes automatically
 - Notes include card positions and reversal status
 - Delete notes individually
+
+### 📸 Screenshot Mode
+- **One-click export mode** for clean screenshots
+- Hides all UI elements (sidebars, controls, buttons)
+- Compresses card spacing for tighter layouts
+- Fullscreen spread display on clean white background
+- Perfect for saving and sharing readings
+- Toggle on/off with floating button
 
 ### 💾 Persistent Storage
 - All data saved to browser localStorage
@@ -77,7 +87,10 @@ Each drawn card has three control buttons:
 #### 2. Configure Shuffle Settings
 1. Set the number of shuffles (1-10) in the **"Shuffles"** field
 2. Check **"Auto-shuffle on draw"** to shuffle automatically before drawing
-3. Click **"Shuffle Deck"** anytime to manually shuffle
+3. Check **"No reversals"** to disable reversed cards (all cards will be upright)
+4. Click **"Shuffle Deck"** anytime to manually shuffle
+
+**Note**: Each shuffle randomizes both card order AND orientation (0° or 180°). When "No reversals" is checked, drawn cards ignore the shuffled orientation and appear upright.
 
 #### 3. Choose a Spread
 1. Click any spread template from the **"Spread Templates"** list
@@ -108,7 +121,14 @@ Each drawn card has three control buttons:
    - Check "Include highlighted cards" to attach card references
    - Click "Add Note"
 
-#### 6. Manage Your Reading
+#### 6. Export Your Reading
+1. Click the **"📸 Screenshot Mode"** button (bottom right corner)
+2. All UI elements disappear, leaving only your spread
+3. Cards are compressed closer together for a clean layout
+4. Take a screenshot using your device's screenshot tool
+5. Click the button again (or press Escape) to exit screenshot mode
+
+#### 7. Manage Your Reading
 - **Clear Reading**: Removes cards from spread (cards remain out of deck)
 - **Return All Cards**: Puts all cards back and shuffles
 - **Change spread**: Selecting a new spread clears current reading
@@ -162,6 +182,19 @@ All data is stored in browser localStorage under the key `cardReaderState`:
 ### Draw Modes
 - **Draw All**: Best for quick readings and familiar spreads
 - **Draw Single**: Best for contemplative readings where you want to reveal cards progressively
+
+### No Reversals Mode
+- Enable this if you don't use reversed card meanings
+- Cards will always appear upright regardless of shuffle
+- Great for beginners or specific reading practices
+- Can be toggled on/off at any time
+
+### Screenshot Mode
+- Use for creating clean reading exports
+- Perfect for journaling or sharing with others
+- Take screenshots after arranging cards to your liking
+- Exit by clicking the button again or pressing Escape
+- Consider screenshotting before and after adjusting orientations
 
 ## Troubleshooting
 
