@@ -1067,7 +1067,8 @@
             notes: [],
             drawMode: 'all',
             nextDrawPosition: 0,
-            noReversals: false
+            noReversals: false,
+            cardAspectRatio: 2 / 3 // Will be updated with actual ratio from images
         };
 
         let pendingDeckImages = [];
@@ -1078,9 +1079,24 @@
         let nextRotation = 0; // For free mode: 0 = vertical, 90 = horizontal
 
         // Card sizing parameters
-        const CARD_ASPECT_RATIO = 2 / 3; // height / width for vertical cards
         const GRID_SIZE = 5; // 5x5 grid
         const MIN_CARD_SPACING = 8; // Minimum spacing between cards in pixels
+
+        // Detect actual card aspect ratio from images
+        function detectCardAspectRatio(imageDataUrl) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const aspectRatio = img.height / img.width; // height / width for vertical cards
+                    resolve(aspectRatio);
+                };
+                img.onerror = () => {
+                    // Fallback to default if image fails to load
+                    resolve(2 / 3);
+                };
+                img.src = imageDataUrl;
+            });
+        }
 
         // Calculate optimal card dimensions based on container size and spread layout
         function calculateCardDimensions() {
@@ -1109,6 +1125,9 @@
             // Get the actual gap value from the container
             const gap = screenshotMode ? 4 : 8;
 
+            // Use the actual card aspect ratio from state
+            const cardAspectRatio = state.cardAspectRatio || (2 / 3);
+
             // Calculate available space per grid cell
             const availableWidth = (containerWidth - (gap * (GRID_SIZE - 1))) / GRID_SIZE;
             const availableHeight = (containerHeight - (gap * (GRID_SIZE - 1))) / GRID_SIZE;
@@ -1134,34 +1153,41 @@
             const effectiveWidth = (containerWidth - (gap * (usedCols - 1))) / usedCols;
             const effectiveHeight = (containerHeight - (gap * (usedRows - 1))) / usedRows;
 
-            // For vertical cards: height = width * (1 / CARD_ASPECT_RATIO)
-            // For horizontal cards: width = height * (1 / CARD_ASPECT_RATIO)
+            // For vertical cards: height = width * cardAspectRatio
+            // For horizontal cards: width = height / cardAspectRatio
 
             // Calculate max card dimensions that fit in cells
             // Try fitting based on width constraint
             let cardWidth = effectiveWidth * 0.85; // Use 85% to leave some breathing room
-            let cardHeight = cardWidth / CARD_ASPECT_RATIO;
+            let cardHeight = cardWidth * cardAspectRatio;
 
             // Check if height exceeds available space
             if (cardHeight > effectiveHeight * 0.85) {
                 // Constrain by height instead
                 cardHeight = effectiveHeight * 0.85;
-                cardWidth = cardHeight * CARD_ASPECT_RATIO;
+                cardWidth = cardHeight / cardAspectRatio;
             }
 
             // Ensure minimum reasonable size
-            cardWidth = Math.max(50, cardWidth);
-            cardHeight = Math.max(75, cardHeight);
+            const minHeight = 75;
+            const minWidth = minHeight / cardAspectRatio;
+            cardWidth = Math.max(minWidth, cardWidth);
+            cardHeight = Math.max(minHeight, cardHeight);
 
             // Ensure maximum reasonable size to prevent cards from being too large
-            cardWidth = Math.min(250, cardWidth);
-            cardHeight = Math.min(375, cardHeight);
+            const maxHeight = 400;
+            const maxWidth = maxHeight / cardAspectRatio;
+            cardWidth = Math.min(maxWidth, cardWidth);
+            cardHeight = Math.min(maxHeight, cardHeight);
 
             return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
         }
 
         // Calculate card size for free-positioned spreads
         function calculateFreePositionCardSize(spread, containerWidth, containerHeight) {
+            // Use the actual card aspect ratio from state
+            const cardAspectRatio = state.cardAspectRatio || (2 / 3);
+
             // Find minimum distance between cards
             let minDistance = Infinity;
 
@@ -1180,24 +1206,31 @@
             }
 
             // Base size on container dimensions
-            let baseSize = Math.min(containerWidth, containerHeight) * 0.25;
+            let baseHeight = Math.min(containerWidth, containerHeight) * 0.3;
 
             // If we have multiple cards, constrain by minimum distance
             if (spread.positions.length > 1 && minDistance !== Infinity) {
-                baseSize = Math.min(baseSize, minDistance * 0.6);
+                baseHeight = Math.min(baseHeight, minDistance * 0.7);
             }
 
             // Calculate card dimensions maintaining aspect ratio
-            let cardWidth = baseSize * 0.6; // Narrower for card proportions
-            let cardHeight = cardWidth / CARD_ASPECT_RATIO;
+            let cardHeight = baseHeight;
+            let cardWidth = cardHeight / cardAspectRatio;
 
             // Ensure cards don't exceed container bounds
-            cardWidth = Math.min(cardWidth, containerWidth * 0.3);
-            cardHeight = Math.min(cardHeight, containerHeight * 0.4);
+            cardWidth = Math.min(cardWidth, containerWidth * 0.35);
+            cardHeight = Math.min(cardHeight, containerHeight * 0.45);
 
             // Ensure minimum and maximum sizes
-            cardWidth = Math.max(60, Math.min(200, cardWidth));
-            cardHeight = Math.max(90, Math.min(300, cardHeight));
+            const minHeight = 90;
+            const minWidth = minHeight / cardAspectRatio;
+            cardWidth = Math.max(minWidth, cardWidth);
+            cardHeight = Math.max(minHeight, cardHeight);
+
+            const maxHeight = 350;
+            const maxWidth = maxHeight / cardAspectRatio;
+            cardWidth = Math.min(maxWidth, cardWidth);
+            cardHeight = Math.min(maxHeight, cardHeight);
 
             return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
         }
@@ -1519,12 +1552,19 @@
             renderDeckPreview();
         }
 
-        function saveDeck() {
+        async function saveDeck() {
             const deckName = document.getElementById('deckName').value.trim();
 
             if (pendingDeckImages.length === 0) {
                 alert('Please add at least one card image');
                 return;
+            }
+
+            // Detect aspect ratio from first card image
+            if (pendingDeckImages.length > 0) {
+                const aspectRatio = await detectCardAspectRatio(pendingDeckImages[0].data);
+                state.cardAspectRatio = aspectRatio;
+                console.log('Detected card aspect ratio:', aspectRatio, `(${Math.round(1/aspectRatio*100)/100}:${Math.round(aspectRatio*100)/100})`);
             }
 
             state.deck = [...pendingDeckImages];
@@ -1535,7 +1575,7 @@
             const shuffleTimes = parseInt(document.getElementById('shuffleCount').value) || 3;
             shuffleDeck(shuffleTimes);
 
-            saveState();
+            await saveState();
             updateDeckCount();
             closeDeckModal();
             alert('Deck saved and shuffled!');
