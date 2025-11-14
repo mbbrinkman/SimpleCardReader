@@ -936,6 +936,17 @@
                 </div>
 
                 <div class="section collapsed">
+                    <h2 onclick="toggleSection(this)">Export Reading</h2>
+                    <div class="section-content">
+                        <div class="info-box">
+                            Export your current reading including spread, card positions, orientations, and notes.
+                        </div>
+                        <button onclick="exportReading('json')">Export as JSON</button>
+                        <button class="secondary" onclick="exportReading('text')">Export as Text</button>
+                    </div>
+                </div>
+
+                <div class="section collapsed">
                     <h2 onclick="toggleSection(this)">Reading Notes</h2>
                     <div class="section-content">
                         <textarea id="noteInput" placeholder="Type your note here..."></textarea>
@@ -1776,6 +1787,104 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // Export Reading
+        function exportReading(format) {
+            if (state.currentSpread === null || state.drawnCards.length === 0) {
+                alert('No reading to export. Draw cards first.');
+                return;
+            }
+
+            const spread = state.spreads[state.currentSpread];
+            const timestamp = new Date().toISOString();
+            const readableDate = new Date().toLocaleString();
+
+            // Gather card data
+            const cards = state.drawnCards.map((drawn, idx) => {
+                const position = spread.positions[idx];
+                return {
+                    number: idx + 1,
+                    position: position.name,
+                    cardName: drawn.card.name,
+                    rotation: drawn.rotation || 0,
+                    reversed: drawn.reversed,
+                    gridPosition: {
+                        row: position.row,
+                        col: position.col
+                    }
+                };
+            });
+
+            if (format === 'json') {
+                // JSON export
+                const exportData = {
+                    exportDate: timestamp,
+                    deckName: state.deckName,
+                    spreadName: spread.name,
+                    cards: cards,
+                    notes: state.notes.map(note => ({
+                        text: note.text,
+                        cards: note.cards,
+                        timestamp: note.timestamp
+                    }))
+                };
+
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const filename = `reading-${spread.name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.json`;
+                downloadFile(blob, filename);
+            } else if (format === 'text') {
+                // Text export
+                let text = `CARD READING EXPORT\n`;
+                text += `===================\n\n`;
+                text += `Date: ${readableDate}\n`;
+                text += `Deck: ${state.deckName}\n`;
+                text += `Spread: ${spread.name}\n\n`;
+
+                text += `CARDS DRAWN\n`;
+                text += `-----------\n`;
+                cards.forEach(card => {
+                    text += `${card.number}. ${card.position}`;
+                    if (card.reversed) {
+                        text += ` (Reversed)`;
+                    }
+                    text += `\n`;
+                    text += `   Card: ${card.cardName}\n`;
+                    text += `   Grid Position: Row ${card.gridPosition.row + 1}, Col ${card.gridPosition.col + 1}\n`;
+                    text += `   Rotation: ${card.rotation}°\n`;
+                    text += `\n`;
+                });
+
+                if (state.notes.length > 0) {
+                    text += `\nREADING NOTES\n`;
+                    text += `-------------\n`;
+                    state.notes.forEach((note, idx) => {
+                        const noteDate = new Date(note.timestamp).toLocaleString();
+                        text += `\n[${noteDate}]\n`;
+                        text += `${note.text}\n`;
+                        if (note.cards.length > 0) {
+                            text += `Cards: ${note.cards.map(c =>
+                                `${c.position} - ${c.cardName}${c.reversed ? ' (Reversed)' : ''}`
+                            ).join(', ')}\n`;
+                        }
+                    });
+                }
+
+                const blob = new Blob([text], { type: 'text/plain' });
+                const filename = `reading-${spread.name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.txt`;
+                downloadFile(blob, filename);
+            }
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Notes
