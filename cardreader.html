@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Tarot Reader</title>
+    <title>Simple Card Reader</title>
     <style>
         * {
             margin: 0;
@@ -151,6 +151,13 @@
 
         input[type="file"] {
             padding: 5px;
+        }
+
+        input[type="number"].inline {
+            width: 60px;
+            display: inline-block;
+            padding: 5px;
+            margin: 0 5px;
         }
 
         .spread-container {
@@ -468,6 +475,29 @@
             font-size: 1.1em;
         }
 
+        .draw-mode-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .draw-mode-toggle button {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.85em;
+        }
+
+        .draw-mode-toggle button.active {
+            background: #48bb78;
+        }
+
+        .shuffle-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -484,7 +514,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔮 Simple Tarot Reader</h1>
+            <h1>🔮 Simple Card Reader</h1>
             <p class="subtitle">Import your deck images, create custom spreads, control card orientation</p>
         </header>
 
@@ -507,9 +537,25 @@
                 </div>
 
                 <div class="section">
-                    <h2>Actions</h2>
+                    <h2>Shuffle Options</h2>
+                    <div class="shuffle-control">
+                        <label style="margin: 0; flex: 1;">Shuffles:</label>
+                        <input type="number" class="inline" id="shuffleCount" min="1" max="10" value="3">
+                    </div>
+                    <label>
+                        <input type="checkbox" id="autoShuffle"> Auto-shuffle on draw
+                    </label>
+                    <button class="secondary" onclick="manualShuffle()">Shuffle Deck</button>
+                </div>
+
+                <div class="section">
+                    <h2>Draw Mode</h2>
+                    <div class="draw-mode-toggle">
+                        <button id="drawAllBtn" class="active" onclick="setDrawMode('all')">Draw All</button>
+                        <button id="drawSingleBtn" onclick="setDrawMode('single')">Draw Single</button>
+                    </div>
                     <button onclick="drawCards()">Draw Cards</button>
-                    <button class="secondary" onclick="shuffleBack()">Shuffle Cards Back</button>
+                    <button class="secondary" onclick="shuffleBack()">Return All Cards</button>
                     <button class="danger" onclick="clearReading()">Clear Reading</button>
                 </div>
             </div>
@@ -519,7 +565,7 @@
                 <h2 style="margin-bottom: 20px; color: #2d3748;">Current Reading</h2>
                 <div class="spread-container" id="spreadContainer">
                     <div class="empty-state">
-                        Select a spread template and draw cards to begin
+                        Import a deck and select a spread template to begin
                     </div>
                 </div>
             </div>
@@ -549,7 +595,7 @@
             <h2>Import Deck Images</h2>
 
             <label>Deck Name</label>
-            <input type="text" id="deckName" placeholder="My Tarot Deck">
+            <input type="text" id="deckName" placeholder="My Card Deck">
 
             <label>Select Card Images</label>
             <input type="file" id="deckFileInput" accept="image/*" multiple onchange="handleDeckFiles(event)">
@@ -601,35 +647,116 @@
             currentSpread: null,
             drawnCards: [],
             highlightedCards: [],
-            notes: []
+            notes: [],
+            drawMode: 'all',
+            nextDrawPosition: 0
         };
 
         let pendingDeckImages = [];
 
-        // Default spread templates
+        // Default spread templates with variety
         const defaultSpreads = [
-            {
-                name: "Three Card Spread",
-                positions: [
-                    { name: "Past", x: 100, y: 150, rotation: 0 },
-                    { name: "Present", x: 300, y: 150, rotation: 0 },
-                    { name: "Future", x: 500, y: 150, rotation: 0 }
-                ]
-            },
             {
                 name: "Single Card",
                 positions: [
-                    { name: "Focus", x: 250, y: 150, rotation: 0 }
+                    { name: "Card", x: 325, y: 150, rotation: 0 }
+                ]
+            },
+            {
+                name: "Three Card Row",
+                positions: [
+                    { name: "Position 1", x: 100, y: 150, rotation: 0 },
+                    { name: "Position 2", x: 300, y: 150, rotation: 0 },
+                    { name: "Position 3", x: 500, y: 150, rotation: 0 }
                 ]
             },
             {
                 name: "Five Card Cross",
                 positions: [
-                    { name: "You", x: 300, y: 200, rotation: 0 },
-                    { name: "Challenge", x: 150, y: 200, rotation: 0 },
-                    { name: "Above", x: 300, y: 50, rotation: 0 },
-                    { name: "Below", x: 300, y: 350, rotation: 0 },
-                    { name: "Outcome", x: 450, y: 200, rotation: 0 }
+                    { name: "Center", x: 300, y: 200, rotation: 0 },
+                    { name: "Left", x: 150, y: 200, rotation: 0 },
+                    { name: "Top", x: 300, y: 50, rotation: 0 },
+                    { name: "Bottom", x: 300, y: 350, rotation: 0 },
+                    { name: "Right", x: 450, y: 200, rotation: 0 }
+                ]
+            },
+            {
+                name: "Seven Card Horseshoe",
+                positions: [
+                    { name: "Position 1", x: 100, y: 300, rotation: -30 },
+                    { name: "Position 2", x: 170, y: 150, rotation: -15 },
+                    { name: "Position 3", x: 280, y: 50, rotation: 0 },
+                    { name: "Position 4", x: 390, y: 50, rotation: 0 },
+                    { name: "Position 5", x: 500, y: 150, rotation: 15 },
+                    { name: "Position 6", x: 570, y: 300, rotation: 30 },
+                    { name: "Position 7", x: 335, y: 250, rotation: 0 }
+                ]
+            },
+            {
+                name: "Four Corners",
+                positions: [
+                    { name: "Top Left", x: 150, y: 100, rotation: 0 },
+                    { name: "Top Right", x: 450, y: 100, rotation: 0 },
+                    { name: "Bottom Left", x: 150, y: 300, rotation: 0 },
+                    { name: "Bottom Right", x: 450, y: 300, rotation: 0 }
+                ]
+            },
+            {
+                name: "Six Card Circle",
+                positions: [
+                    { name: "Position 1", x: 335, y: 50, rotation: 0 },
+                    { name: "Position 2", x: 485, y: 125, rotation: 60 },
+                    { name: "Position 3", x: 485, y: 275, rotation: 120 },
+                    { name: "Position 4", x: 335, y: 350, rotation: 180 },
+                    { name: "Position 5", x: 185, y: 275, rotation: 240 },
+                    { name: "Position 6", x: 185, y: 125, rotation: 300 }
+                ]
+            },
+            {
+                name: "Pyramid (Six Cards)",
+                positions: [
+                    { name: "Top", x: 325, y: 50, rotation: 0 },
+                    { name: "Row 2 Left", x: 225, y: 150, rotation: 0 },
+                    { name: "Row 2 Right", x: 425, y: 150, rotation: 0 },
+                    { name: "Row 3 Left", x: 125, y: 250, rotation: 0 },
+                    { name: "Row 3 Center", x: 325, y: 250, rotation: 0 },
+                    { name: "Row 3 Right", x: 525, y: 250, rotation: 0 }
+                ]
+            },
+            {
+                name: "Two Card Comparison",
+                positions: [
+                    { name: "Option A", x: 200, y: 150, rotation: 0 },
+                    { name: "Option B", x: 450, y: 150, rotation: 0 }
+                ]
+            },
+            {
+                name: "Nine Card Grid",
+                positions: [
+                    { name: "Top Left", x: 150, y: 80, rotation: 0 },
+                    { name: "Top Center", x: 325, y: 80, rotation: 0 },
+                    { name: "Top Right", x: 500, y: 80, rotation: 0 },
+                    { name: "Middle Left", x: 150, y: 200, rotation: 0 },
+                    { name: "Center", x: 325, y: 200, rotation: 0 },
+                    { name: "Middle Right", x: 500, y: 200, rotation: 0 },
+                    { name: "Bottom Left", x: 150, y: 320, rotation: 0 },
+                    { name: "Bottom Center", x: 325, y: 320, rotation: 0 },
+                    { name: "Bottom Right", x: 500, y: 320, rotation: 0 }
+                ]
+            },
+            {
+                name: "Celtic Cross (Ten Cards)",
+                positions: [
+                    { name: "Present", x: 300, y: 200, rotation: 0 },
+                    { name: "Challenge", x: 300, y: 200, rotation: 90 },
+                    { name: "Foundation", x: 300, y: 320, rotation: 0 },
+                    { name: "Recent Past", x: 180, y: 200, rotation: 0 },
+                    { name: "Crown", x: 300, y: 80, rotation: 0 },
+                    { name: "Near Future", x: 420, y: 200, rotation: 0 },
+                    { name: "Self", x: 550, y: 320, rotation: 0 },
+                    { name: "Environment", x: 550, y: 230, rotation: 0 },
+                    { name: "Hopes/Fears", x: 550, y: 140, rotation: 0 },
+                    { name: "Outcome", x: 550, y: 50, rotation: 0 }
                 ]
             }
         ];
@@ -639,10 +766,12 @@
             loadState();
             if (state.spreads.length === 0) {
                 state.spreads = [...defaultSpreads];
+                saveState();
             }
             renderTemplates();
             updateDeckCount();
             renderNotes();
+            updateDrawModeButtons();
             if (state.currentSpread !== null) {
                 renderSpread();
             }
@@ -650,14 +779,44 @@
 
         // Local storage
         function saveState() {
-            localStorage.setItem('tarotReaderState', JSON.stringify(state));
+            localStorage.setItem('cardReaderState', JSON.stringify(state));
         }
 
         function loadState() {
-            const saved = localStorage.getItem('tarotReaderState');
+            const saved = localStorage.getItem('cardReaderState');
             if (saved) {
                 state = JSON.parse(saved);
             }
+        }
+
+        // Shuffle function
+        function shuffleDeck(times = 1) {
+            for (let t = 0; t < times; t++) {
+                for (let i = state.currentDeck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [state.currentDeck[i], state.currentDeck[j]] = [state.currentDeck[j], state.currentDeck[i]];
+                }
+            }
+        }
+
+        function manualShuffle() {
+            const times = parseInt(document.getElementById('shuffleCount').value) || 3;
+            shuffleDeck(times);
+            saveState();
+            alert(`Deck shuffled ${times} time${times > 1 ? 's' : ''}!`);
+        }
+
+        // Draw mode management
+        function setDrawMode(mode) {
+            state.drawMode = mode;
+            state.nextDrawPosition = 0;
+            saveState();
+            updateDrawModeButtons();
+        }
+
+        function updateDrawModeButtons() {
+            document.getElementById('drawAllBtn').classList.toggle('active', state.drawMode === 'all');
+            document.getElementById('drawSingleBtn').classList.toggle('active', state.drawMode === 'single');
         }
 
         // Deck management
@@ -727,10 +886,15 @@
             state.deck = [...pendingDeckImages];
             state.deckName = deckName || 'My Deck';
             state.currentDeck = [...pendingDeckImages];
+
+            // Auto-shuffle on deck save
+            const shuffleTimes = parseInt(document.getElementById('shuffleCount').value) || 3;
+            shuffleDeck(shuffleTimes);
+
             saveState();
             updateDeckCount();
             closeDeckModal();
-            alert('Deck saved successfully!');
+            alert('Deck saved and shuffled!');
         }
 
         function updateDeckCount() {
@@ -743,20 +907,24 @@
         // Spread template management
         function renderTemplates() {
             const list = document.getElementById('templateList');
-            list.innerHTML = state.spreads.map((spread, idx) => `
-                <div class="template-item ${state.currentSpread === idx ? 'active' : ''}"
-                     onclick="selectSpread(${idx})">
-                    <button class="template-delete" onclick="event.stopPropagation(); deleteSpread(${idx})">×</button>
-                    <strong>${spread.name}</strong><br>
-                    <small>${spread.positions.length} positions</small>
-                </div>
-            `).join('');
+            list.innerHTML = state.spreads.map((spread, idx) => {
+                const isDefault = idx < defaultSpreads.length;
+                return `
+                    <div class="template-item ${state.currentSpread === idx ? 'active' : ''}"
+                         onclick="selectSpread(${idx})">
+                        ${!isDefault ? `<button class="template-delete" onclick="event.stopPropagation(); deleteSpread(${idx})">×</button>` : ''}
+                        <strong>${spread.name}</strong><br>
+                        <small>${spread.positions.length} positions</small>
+                    </div>
+                `;
+            }).join('');
         }
 
         function selectSpread(idx) {
             state.currentSpread = idx;
             state.drawnCards = [];
             state.highlightedCards = [];
+            state.nextDrawPosition = 0;
             saveState();
             renderTemplates();
             renderSpread();
@@ -769,6 +937,7 @@
                     state.currentSpread = null;
                     state.drawnCards = [];
                     state.highlightedCards = [];
+                    state.nextDrawPosition = 0;
                 } else if (state.currentSpread > idx) {
                     state.currentSpread--;
                 }
@@ -849,25 +1018,65 @@
             }
 
             const spread = state.spreads[state.currentSpread];
-            const needed = spread.positions.length;
 
-            if (state.currentDeck.length < needed) {
-                alert(`Not enough cards remaining. Need ${needed}, have ${state.currentDeck.length}. Shuffle cards back to continue.`);
-                return;
-            }
+            if (state.drawMode === 'all') {
+                // Draw all at once
+                const needed = spread.positions.length;
 
-            state.drawnCards = [];
-            state.highlightedCards = [];
+                if (state.currentDeck.length < needed) {
+                    alert(`Not enough cards remaining. Need ${needed}, have ${state.currentDeck.length}. Return cards to continue.`);
+                    return;
+                }
 
-            for (let i = 0; i < needed; i++) {
+                // Auto-shuffle if enabled
+                if (document.getElementById('autoShuffle').checked) {
+                    const shuffleTimes = parseInt(document.getElementById('shuffleCount').value) || 3;
+                    shuffleDeck(shuffleTimes);
+                }
+
+                state.drawnCards = [];
+                state.highlightedCards = [];
+                state.nextDrawPosition = 0;
+
+                for (let i = 0; i < needed; i++) {
+                    const randomIdx = Math.floor(Math.random() * state.currentDeck.length);
+                    const card = state.currentDeck.splice(randomIdx, 1)[0];
+                    const reversed = Math.random() < 0.5;
+                    state.drawnCards.push({
+                        card,
+                        reversed,
+                        rotation: spread.positions[i].rotation
+                    });
+                }
+            } else {
+                // Draw single card
+                if (state.nextDrawPosition >= spread.positions.length) {
+                    alert('All positions filled. Clear reading or return cards to draw again.');
+                    return;
+                }
+
+                if (state.currentDeck.length === 0) {
+                    alert('No cards remaining. Return cards to continue.');
+                    return;
+                }
+
+                // Auto-shuffle if enabled and first draw
+                if (document.getElementById('autoShuffle').checked && state.nextDrawPosition === 0) {
+                    const shuffleTimes = parseInt(document.getElementById('shuffleCount').value) || 3;
+                    shuffleDeck(shuffleTimes);
+                }
+
                 const randomIdx = Math.floor(Math.random() * state.currentDeck.length);
                 const card = state.currentDeck.splice(randomIdx, 1)[0];
                 const reversed = Math.random() < 0.5;
+
                 state.drawnCards.push({
                     card,
                     reversed,
-                    rotation: spread.positions[i].rotation
+                    rotation: spread.positions[state.nextDrawPosition].rotation
                 });
+
+                state.nextDrawPosition++;
             }
 
             saveState();
@@ -877,15 +1086,18 @@
 
         function shuffleBack() {
             state.currentDeck = [...state.deck];
+            const shuffleTimes = parseInt(document.getElementById('shuffleCount').value) || 3;
+            shuffleDeck(shuffleTimes);
             saveState();
             updateDeckCount();
-            alert('All cards shuffled back into the deck');
+            alert(`All cards returned and shuffled ${shuffleTimes} time${shuffleTimes > 1 ? 's' : ''}!`);
         }
 
         function clearReading() {
             if (confirm('Clear the current reading?')) {
                 state.drawnCards = [];
                 state.highlightedCards = [];
+                state.nextDrawPosition = 0;
                 saveState();
                 renderSpread();
             }
@@ -940,6 +1152,16 @@
             }
 
             container.innerHTML = spread.positions.map((pos, idx) => {
+                if (idx >= state.drawnCards.length) {
+                    // Position not yet filled (single card mode)
+                    return `
+                        <div class="card-position" style="left: ${pos.x}px; top: ${pos.y}px;">
+                            <div class="position-label">${pos.name}</div>
+                            <div style="width: 150px; height: 225px; border: 3px dashed #cbd5e0; border-radius: 8px; background: #f7fafc;"></div>
+                        </div>
+                    `;
+                }
+
                 const drawn = state.drawnCards[idx];
                 const highlighted = state.highlightedCards.includes(idx);
                 const totalRotation = (drawn.rotation || 0) + (drawn.reversed ? 180 : 0);
