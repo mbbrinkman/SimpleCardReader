@@ -252,8 +252,6 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            width: 100%;
-            height: 100%;
         }
 
         .card-wrapper.highlighted {
@@ -1142,8 +1140,8 @@
             // Use the actual card aspect ratio from state
             const cardAspectRatio = state.cardAspectRatio || (2 / 3);
 
-            // Reserve space for labels and controls (approximate)
-            const labelControlSpace = 40; // pixels for label + controls
+            // Reserve space for labels and controls (smaller in fullscreen)
+            const labelControlSpace = fullscreenSpread ? 15 : 30;
 
             // Calculate available space per grid cell
             const cellWidth = (containerWidth - (gap * (GRID_SIZE - 1))) / GRID_SIZE;
@@ -1177,12 +1175,12 @@
             // For vertical cards: height = width * cardAspectRatio
             // Calculate based on both constraints and use the smaller result
 
-            // Option 1: Constrain by width
-            let cardWidthByWidth = availableCardWidth * 0.95;
+            // Option 1: Constrain by width (use 98% to maximize space)
+            let cardWidthByWidth = availableCardWidth * 0.98;
             let cardHeightByWidth = cardWidthByWidth * cardAspectRatio;
 
-            // Option 2: Constrain by height
-            let cardHeightByHeight = availableCardHeight * 0.95;
+            // Option 2: Constrain by height (use 98% to maximize space)
+            let cardHeightByHeight = availableCardHeight * 0.98;
             let cardWidthByHeight = cardHeightByHeight / cardAspectRatio;
 
             // Use whichever gives us a card that fits in both dimensions
@@ -1204,7 +1202,7 @@
             cardHeight = Math.max(minHeight, cardHeight);
 
             // Ensure maximum reasonable size
-            const maxHeight = 500;
+            const maxHeight = 600;
             const maxWidth = maxHeight / cardAspectRatio;
             cardWidth = Math.min(maxWidth, cardWidth);
             cardHeight = Math.min(maxHeight, cardHeight);
@@ -1212,11 +1210,13 @@
             console.log('Grid card sizing:', {
                 cellWidth: cellWidth.toFixed(1),
                 cellHeight: cellHeight.toFixed(1),
+                availableCardWidth: availableCardWidth.toFixed(1),
+                availableCardHeight: availableCardHeight.toFixed(1),
                 cardWidth: cardWidth.toFixed(1),
                 cardHeight: cardHeight.toFixed(1),
                 aspectRatio: cardAspectRatio.toFixed(2),
-                containerWidth,
-                containerHeight
+                labelControlSpace,
+                fullscreenSpread
             });
 
             return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
@@ -1244,21 +1244,21 @@
                 }
             }
 
-            // Base size on container dimensions (be more generous)
-            let baseHeight = Math.min(containerWidth, containerHeight) * 0.4;
+            // Base size on container dimensions (be very generous)
+            let baseHeight = Math.min(containerWidth, containerHeight) * 0.5;
 
-            // If we have multiple cards, constrain by minimum distance (use more of it)
+            // If we have multiple cards, constrain by minimum distance (use most of it)
             if (spread.positions.length > 1 && minDistance !== Infinity) {
-                baseHeight = Math.min(baseHeight, minDistance * 0.85);
+                baseHeight = Math.min(baseHeight, minDistance * 0.9);
             }
 
             // Calculate card dimensions maintaining aspect ratio
             let cardHeight = baseHeight;
             let cardWidth = cardHeight / cardAspectRatio;
 
-            // Ensure cards don't exceed container bounds (be more generous)
-            cardWidth = Math.min(cardWidth, containerWidth * 0.45);
-            cardHeight = Math.min(cardHeight, containerHeight * 0.55);
+            // Ensure cards don't exceed container bounds (be very generous)
+            cardWidth = Math.min(cardWidth, containerWidth * 0.5);
+            cardHeight = Math.min(cardHeight, containerHeight * 0.6);
 
             // Ensure minimum and maximum sizes
             const minHeight = 80;
@@ -1266,7 +1266,7 @@
             cardWidth = Math.max(minWidth, cardWidth);
             cardHeight = Math.max(minHeight, cardHeight);
 
-            const maxHeight = 500;
+            const maxHeight = 600;
             const maxWidth = maxHeight / cardAspectRatio;
             cardWidth = Math.min(maxWidth, cardWidth);
             cardHeight = Math.min(maxHeight, cardHeight);
