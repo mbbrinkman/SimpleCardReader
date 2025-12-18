@@ -1113,26 +1113,23 @@
         }
 
         // Convert grid positions to normalized x/y coordinates (0-1 range)
-        function normalizeSpreadPositions(spread) {
+        function normalizeSpreadPositions(spread, containerWidth, containerHeight, cardWidth, cardHeight) {
             const positions = spread.positions.map(pos => {
                 if (pos.x !== undefined && pos.y !== undefined) {
-                    // Already has x/y coordinates
                     return { ...pos };
                 } else if (pos.row !== undefined && pos.col !== undefined) {
-                    // Convert grid row/col to x/y (0-1 range based on 5x5 grid)
                     return {
                         ...pos,
-                        x: (pos.col + 0.5) / 5, // Center of cell
+                        x: (pos.col + 0.5) / 5,
                         y: (pos.row + 0.5) / 5
                     };
                 }
-                return { ...pos, x: 0.5, y: 0.5 }; // Fallback to center
+                return { ...pos, x: 0.5, y: 0.5 };
             });
 
-            // Find the bounding box of all positions
+            // Find bounding box
             let minX = Infinity, maxX = -Infinity;
             let minY = Infinity, maxY = -Infinity;
-
             positions.forEach(pos => {
                 minX = Math.min(minX, pos.x);
                 maxX = Math.max(maxX, pos.x);
@@ -1140,82 +1137,115 @@
                 maxY = Math.max(maxY, pos.y);
             });
 
-            // Normalize to use full 0-1 range with minimal padding
             const rangeX = maxX - minX || 1;
             const rangeY = maxY - minY || 1;
-            const padding = 0.05; // 5% padding from edges
+
+            // Calculate padding based on card size to keep cards in bounds
+            // Card is centered, so need half card width/height as margin
+            const paddingX = cardWidth ? (cardWidth / 2 + 10) / containerWidth : 0.1;
+            const paddingY = cardHeight ? (cardHeight / 2 + 10) / containerHeight : 0.1;
 
             return positions.map(pos => ({
                 ...pos,
-                normX: positions.length === 1 ? 0.5 : padding + (pos.x - minX) / rangeX * (1 - 2 * padding),
-                normY: positions.length === 1 ? 0.5 : padding + (pos.y - minY) / rangeY * (1 - 2 * padding)
+                normX: positions.length === 1 ? 0.5 : paddingX + (pos.x - minX) / rangeX * (1 - 2 * paddingX),
+                normY: positions.length === 1 ? 0.5 : paddingY + (pos.y - minY) / rangeY * (1 - 2 * paddingY)
             }));
         }
 
         // Calculate optimal card dimensions based on spread and container
-        function calculateCardDimensions(normalizedPositions, containerWidth, containerHeight) {
+        function calculateCardDimensions(spread, containerWidth, containerHeight) {
             const cardAspectRatio = state.cardAspectRatio || (2 / 3);
-            const labelSpace = fullscreenSpread ? 20 : 40; // Space for label + controls
 
-            // For single card, use most of the container
-            if (normalizedPositions.length === 1) {
-                const maxHeight = (containerHeight - labelSpace) * 0.8;
-                const maxWidth = containerWidth * 0.8;
+            // Convert positions to get layout info
+            const positions = spread.positions.map(pos => {
+                if (pos.x !== undefined && pos.y !== undefined) {
+                    return { x: pos.x, y: pos.y };
+                } else if (pos.row !== undefined && pos.col !== undefined) {
+                    return { x: (pos.col + 0.5) / 5, y: (pos.row + 0.5) / 5 };
+                }
+                return { x: 0.5, y: 0.5 };
+            });
 
+            // Single card - use most of container
+            if (positions.length === 1) {
+                const maxHeight = containerHeight * 0.75;
+                const maxWidth = containerWidth * 0.75;
                 let cardHeight = maxHeight;
                 let cardWidth = cardHeight / cardAspectRatio;
-
                 if (cardWidth > maxWidth) {
                     cardWidth = maxWidth;
                     cardHeight = cardWidth * cardAspectRatio;
                 }
-
                 return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
             }
 
-            // Find minimum distance between normalized positions
-            let minDistNorm = Infinity;
-            for (let i = 0; i < normalizedPositions.length; i++) {
-                for (let j = i + 1; j < normalizedPositions.length; j++) {
-                    const dx = normalizedPositions[i].normX - normalizedPositions[j].normX;
-                    const dy = normalizedPositions[i].normY - normalizedPositions[j].normY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    minDistNorm = Math.min(minDistNorm, dist);
+            // Find bounding box and analyze layout
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            positions.forEach(pos => {
+                minX = Math.min(minX, pos.x);
+                maxX = Math.max(maxX, pos.x);
+                minY = Math.min(minY, pos.y);
+                maxY = Math.max(maxY, pos.y);
+            });
+
+            const rangeX = maxX - minX;
+            const rangeY = maxY - minY;
+
+            // Count unique positions in each direction
+            const uniqueX = new Set(positions.map(p => p.x.toFixed(3))).size;
+            const uniqueY = new Set(positions.map(p => p.y.toFixed(3))).size;
+
+            // Calculate available space per card based on layout
+            // Leave margin for card edges (cards are centered at positions)
+            const margin = 20; // pixels for edges
+            const availableWidth = containerWidth - margin * 2;
+            const availableHeight = containerHeight - margin * 2;
+
+            let cardWidth, cardHeight;
+
+            if (rangeX === 0 && rangeY === 0) {
+                // All cards stacked at same position
+                cardHeight = availableHeight * 0.6;
+                cardWidth = cardHeight / cardAspectRatio;
+            } else if (rangeY === 0) {
+                // Horizontal row - divide width by number of cards
+                cardWidth = availableWidth / uniqueX * 0.9;
+                cardHeight = cardWidth * cardAspectRatio;
+                // Constrain by height
+                if (cardHeight > availableHeight * 0.8) {
+                    cardHeight = availableHeight * 0.8;
+                    cardWidth = cardHeight / cardAspectRatio;
+                }
+            } else if (rangeX === 0) {
+                // Vertical column - divide height by number of cards
+                cardHeight = availableHeight / uniqueY * 0.9;
+                cardWidth = cardHeight / cardAspectRatio;
+                // Constrain by width
+                if (cardWidth > availableWidth * 0.8) {
+                    cardWidth = availableWidth * 0.8;
+                    cardHeight = cardWidth * cardAspectRatio;
+                }
+            } else {
+                // Mixed layout - use grid-like calculation
+                const cellWidth = availableWidth / uniqueX;
+                const cellHeight = availableHeight / uniqueY;
+
+                // Fit card in cell maintaining aspect ratio
+                cardWidth = cellWidth * 0.85;
+                cardHeight = cardWidth * cardAspectRatio;
+
+                if (cardHeight > cellHeight * 0.85) {
+                    cardHeight = cellHeight * 0.85;
+                    cardWidth = cardHeight / cardAspectRatio;
                 }
             }
 
-            // Convert normalized distance to pixels
-            const minDistX = minDistNorm * containerWidth;
-            const minDistY = minDistNorm * containerHeight;
-            const minDistPx = Math.min(minDistX, minDistY);
-
-            // Card should be smaller than the minimum distance to prevent overlap
-            // Use 95% of the minimum distance as the card's largest dimension
-            const maxCardDimension = minDistPx * 0.95;
-
-            // Calculate card size maintaining aspect ratio
-            let cardHeight, cardWidth;
-            if (cardAspectRatio > 1) {
-                // Tall card (height > width)
-                cardHeight = maxCardDimension;
-                cardWidth = cardHeight / cardAspectRatio;
-            } else {
-                // Wide or square card
-                cardWidth = maxCardDimension;
-                cardHeight = cardWidth * cardAspectRatio;
-            }
-
-            // Ensure minimum size
+            // Clamp to reasonable bounds
             const minHeight = 60;
-            const minWidth = minHeight / cardAspectRatio;
-            cardWidth = Math.max(minWidth, cardWidth);
-            cardHeight = Math.max(minHeight, cardHeight);
-
-            // Ensure maximum size
-            const maxHeight = Math.min(600, containerHeight * 0.7);
-            const maxWidth = maxHeight / cardAspectRatio;
-            cardWidth = Math.min(maxWidth, cardWidth);
-            cardHeight = Math.min(maxHeight, cardHeight);
+            const maxHeight = Math.min(500, containerHeight * 0.6);
+            cardHeight = Math.max(minHeight, Math.min(maxHeight, cardHeight));
+            cardWidth = cardHeight / cardAspectRatio;
 
             return { width: Math.floor(cardWidth), height: Math.floor(cardHeight) };
         }
@@ -2003,11 +2033,11 @@
             const containerWidth = containerRect.width;
             const containerHeight = containerRect.height;
 
-            // Normalize all positions to use the full container space
-            const normalizedPositions = normalizeSpreadPositions(spread);
+            // Calculate optimal card size based on spread layout
+            const cardDims = calculateCardDimensions(spread, containerWidth, containerHeight);
 
-            // Calculate optimal card size based on normalized positions
-            const cardDims = calculateCardDimensions(normalizedPositions, containerWidth, containerHeight);
+            // Normalize positions with card-size-aware padding to keep cards in bounds
+            const normalizedPositions = normalizeSpreadPositions(spread, containerWidth, containerHeight, cardDims.width, cardDims.height);
 
             // Group positions by location for stacked cards (like Celtic Cross)
             const positionGroups = {};
