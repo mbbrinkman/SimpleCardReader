@@ -222,6 +222,11 @@
         .card-position {
             position: absolute;
             transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .card-position.has-highlighted {
+            z-index: 1000;
         }
 
         .card-position .card-wrapper {
@@ -2062,7 +2067,9 @@
                     return;
                 }
 
-                html += `<div class="card-position" style="left: ${firstPos.normX * 100}%; top: ${firstPos.normY * 100}%;">`;
+                // Check if any card in this position is highlighted
+                const hasHighlighted = indices.some(idx => state.highlightedCards.includes(idx));
+                html += `<div class="card-position ${hasHighlighted ? 'has-highlighted' : ''}" style="left: ${firstPos.normX * 100}%; top: ${firstPos.normY * 100}%;">`;
 
                 for (const posIndex of indices) {
                     const pos = normalizedPositions[posIndex];
