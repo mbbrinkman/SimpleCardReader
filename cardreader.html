@@ -252,6 +252,7 @@
         }
 
         .card-wrapper.highlighted {
+            z-index: 1000 !important;
             filter: drop-shadow(0 0 8px #ffa500);
         }
 
@@ -1139,10 +1140,10 @@
                 maxY = Math.max(maxY, pos.y);
             });
 
-            // Normalize to use full 0-1 range with padding
+            // Normalize to use full 0-1 range with minimal padding
             const rangeX = maxX - minX || 1;
             const rangeY = maxY - minY || 1;
-            const padding = 0.1; // 10% padding from edges
+            const padding = 0.05; // 5% padding from edges
 
             return positions.map(pos => ({
                 ...pos,
@@ -1189,8 +1190,8 @@
             const minDistPx = Math.min(minDistX, minDistY);
 
             // Card should be smaller than the minimum distance to prevent overlap
-            // Use 85% of the minimum distance as the card's largest dimension
-            const maxCardDimension = minDistPx * 0.85;
+            // Use 95% of the minimum distance as the card's largest dimension
+            const maxCardDimension = minDistPx * 0.95;
 
             // Calculate card size maintaining aspect ratio
             let cardHeight, cardWidth;
