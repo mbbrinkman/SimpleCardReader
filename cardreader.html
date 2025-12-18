@@ -269,20 +269,42 @@
         }
 
         .position-label {
-            background: #1a0f2e;
+            display: none;
+            background: rgba(26, 15, 46, 0.95);
             color: #d4af37;
-            padding: 2px 6px;
-            border-radius: 2px;
-            font-size: 0.65em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
             white-space: nowrap;
-            margin-bottom: 2px;
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
             border: 1px solid #4a3b5c;
+            z-index: 100;
+        }
+
+        .card-wrapper.highlighted .position-label {
+            display: block;
         }
 
         .card-controls {
-            display: flex;
+            display: none;
             gap: 3px;
             margin-top: 2px;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 15, 46, 0.95);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #4a3b5c;
+            z-index: 100;
+        }
+
+        .card-wrapper.highlighted .card-controls {
+            display: flex;
         }
 
         .card-controls button {
@@ -794,13 +816,8 @@
             border: none;
         }
 
-        body.fullscreen-spread .card-controls {
-            display: none;
-        }
-
         body.fullscreen-spread .position-label {
-            font-size: 0.7em;
-            padding: 3px 8px;
+            font-size: 0.65em;
         }
 
         body.fullscreen-spread .view-toggle {
